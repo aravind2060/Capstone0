@@ -1,0 +1,17 @@
+<resources>
+    <string name="app_name">Capstone0</string>
+
+    <string name="Email_Address">Email Address</string>
+    <string name="Password">Password</string>
+    <string name="Confirm_Password">Confirm Password</string>
+    <string name="Sign_In">Sign In</string>
+
+    <string name="Full_Name">Enter Name</string>
+    <string name="Gender_Type">Gender</string>
+    <string name="Phone_Number">Phone Number</string>
+
+    <array name="Gender_List">
+        <item>Male</item>
+        <item>Female</item>
+    </array>
+</resources>
