@@ -5,7 +5,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:padding="20dp"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context=".Login.SignUp">
+    tools:context=".Login.A_SignUp">
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/Sign_UP_Txt_Layout_1"
@@ -42,6 +42,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:errorEnabled="true"
+        app:counterEnabled="true"
+        app:counterMaxLength="10"
         >
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/Sign_Up_Txt_EditTxt_Phone"
@@ -60,6 +62,7 @@
         android:layout_height="wrap_content"
         app:errorEnabled="true"
         app:passwordToggleEnabled="true"
+        app:counterEnabled="true"
         >
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/Sign_Up_Txt_EditTxt_Password"
@@ -76,6 +79,7 @@
         android:layout_height="wrap_content"
         app:errorEnabled="true"
         app:passwordToggleEnabled="true"
+        app:counterEnabled="true"
         >
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/Sign_Up_Txt_EditTxt_Confirm_Password"
@@ -88,7 +92,7 @@
     <LinearLayout
         android:id="@+id/Sign_Up_LinearLayout1_Spinner_6"
         android:layout_below="@id/Sign_UP_Txt_Layout_5"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:layout_centerHorizontal="true"

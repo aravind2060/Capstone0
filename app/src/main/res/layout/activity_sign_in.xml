@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:padding="26dp"
-    tools:context=".Login.SignIn">
+    tools:context=".Login.A_SignIn">
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/sign_in_txt_layout_1"
@@ -47,5 +47,58 @@
         android:textColor="@color/White"
         />
 
+   <LinearLayout
+       android:id="@+id/Sign_In_LinearLayout_SignUp_Link"
+       android:layout_below="@id/sign_in_btn_SignIn"
+       android:layout_width="wrap_content"
+       android:layout_height="wrap_content"
+       android:orientation="horizontal"
+       android:layout_centerHorizontal="true"
+       android:paddingTop="26dp"
+       >
+       <TextView
+           android:layout_width="wrap_content"
+           android:layout_height="wrap_content"
+           android:text="@string/Dont_have_account"
+           />
+       <TextView
+           android:id="@+id/Sign_In_txt_SignUP_Link"
+           android:layout_width="wrap_content"
+           android:layout_height="wrap_content"
+           android:clickable="true"
+           android:onClick="onClick"
+           android:textColor="@color/Green"
+           android:text="@string/Sign_Up"
+           />
+   </LinearLayout>
+    <LinearLayout
+        android:id="@+id/Sign_In_LinearLayout_Reset_Password_Link"
+        android:layout_below="@id/Sign_In_LinearLayout_SignUp_Link"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_centerHorizontal="true"
+        android:paddingTop="26dp"
+        >
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/Trouble_Logging_In"
+            />
+        <TextView
+            android:id="@+id/Sign_In_txt_Reset_Password_Link"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:clickable="true"
+            android:onClick="onClick"
+            android:textColor="@color/Green"
+            android:text="@string/Reset"
+            />
+    </LinearLayout>
+   <FrameLayout
+       android:id="@+id/Sign_In_Frame_Layout_Reset_Password"
+       android:layout_width="match_parent"
+       android:layout_height="match_parent"
+       />
 
 </RelativeLayout>

@@ -21,14 +21,14 @@ import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.ProviderQueryResult;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.SignInMethodQueryResult;
 
 
 import java.util.regex.Pattern;
 
 
-public class SignIn extends AppCompatActivity implements View.OnClickListener {
+public class A_SignIn extends AppCompatActivity implements View.OnClickListener {
 
     Button SignIn;
     TextInputEditText Email,Password;
@@ -49,7 +49,7 @@ public class SignIn extends AppCompatActivity implements View.OnClickListener {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.signin);
+        setContentView(R.layout.activity_sign_in);
 
      SignIn=findViewById(R.id.sign_in_btn_SignIn);
      Email=findViewById(R.id.sign_in_txt_edit_txt_email);
@@ -63,13 +63,16 @@ public class SignIn extends AppCompatActivity implements View.OnClickListener {
 
     }
 
-    //use shared preferences here
-//    @Override
-//    protected void onStart() {
-//        super.onStart();
-//        FirebaseUser currentUser=firebaseAuth.getCurrentUser();
-//
-//    }
+    //todo use shared preferences here
+    @Override
+    protected void onStart() {
+        super.onStart();
+        FirebaseUser currentUser=firebaseAuth.getCurrentUser();
+        if (currentUser!=null && currentUser.isEmailVerified())
+        {
+           startActivity(new Intent(getApplicationContext(),MainActivity.class));
+        }
+    }
 
     @Override
     public void onClick(View v)
@@ -85,9 +88,17 @@ public class SignIn extends AppCompatActivity implements View.OnClickListener {
                  public void onComplete(@NonNull Task<AuthResult> task) {
                       if(task.isSuccessful())
                       {
-                          Toast.makeText(getApplicationContext(),"Login Success",Toast.LENGTH_LONG).show();
-                          //save in shared preference
-                          startActivity(new Intent(getApplicationContext(),MainActivity.class));
+                          if (firebaseAuth.getCurrentUser().isEmailVerified())
+                          {
+                              Toast.makeText(getApplicationContext(),"Login Success",Toast.LENGTH_LONG).show();
+                              //todo save in shared preference
+                              startActivity(new Intent(getApplicationContext(),MainActivity.class));
+                          }
+                          else
+                          {
+                              Toast.makeText(getApplicationContext(),"You have registered please verify your mail!!",Toast.LENGTH_LONG).show();
+                          }
+
                       }
                       else
                       {
@@ -101,7 +112,14 @@ public class SignIn extends AppCompatActivity implements View.OnClickListener {
 
          }
       }
-
+      else if (v.getId()==R.id.Sign_In_txt_SignUP_Link)
+      {
+          startActivity(new Intent(getApplicationContext(), A_SignUp.class));
+      }
+      else if (v.getId()==R.id.Sign_In_txt_Reset_Password_Link)
+      {
+        startActivity(new Intent(getApplicationContext(), A_ResetPassword.class));
+      }
 
     }
 
