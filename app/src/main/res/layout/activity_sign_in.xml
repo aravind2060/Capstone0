@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/Sign_In_Root_Tag"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -46,10 +47,17 @@
         android:background="@color/Green"
         android:textColor="@color/White"
         />
-
+    <com.google.android.gms.common.SignInButton
+        android:id="@+id/Sign_In_Btn_Google_SignIn_4"
+        android:layout_below="@id/sign_in_btn_SignIn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:padding="10dp"
+        />
    <LinearLayout
        android:id="@+id/Sign_In_LinearLayout_SignUp_Link"
-       android:layout_below="@id/sign_in_btn_SignIn"
+       android:layout_below="@id/Sign_In_Btn_Google_SignIn_4"
        android:layout_width="wrap_content"
        android:layout_height="wrap_content"
        android:orientation="horizontal"
@@ -95,10 +103,5 @@
             android:text="@string/Reset"
             />
     </LinearLayout>
-   <FrameLayout
-       android:id="@+id/Sign_In_Frame_Layout_Reset_Password"
-       android:layout_width="match_parent"
-       android:layout_height="match_parent"
-       />
 
 </RelativeLayout>

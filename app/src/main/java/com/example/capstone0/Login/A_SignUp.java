@@ -38,13 +38,13 @@ public class A_SignUp extends AppCompatActivity implements View.OnClickListener 
     private static final Pattern USER_NAME_PATTERN= Pattern.compile("^[a-zA-Z ]{3,20}$",Pattern.CASE_INSENSITIVE);
     private static final Pattern PASSWORD_PATTERN =
             Pattern.compile("^" +
-                    "(?=.*[0-9])" +         //at least 1 digit
+                    //"(?=.*[0-9])" +         //at least 1 digit
                     //"(?=.*[a-z])" +         //at least 1 lower case letter
-                    "(?=.*[A-Z])" +         //at least 1 upper case letter
+                    //"(?=.*[A-Z])" +         //at least 1 upper case letter
                     "(?=.*[a-zA-Z])" +      //any letter
-                    "(?=.*[@#$%^&+=])" +    //at least 1 special character
+                    //"(?=.*[@#$%^&+=])" +    //at least 1 special character
                     "(?=\\S+$)" +           //no white spaces
-                    ".{5,}" +               //at least 4 characters
+                    ".{6,}" +               //at least 4 characters
                     "$");
     private static final Pattern PHONE_NUMBER_PATTERN=Pattern.compile("^[9876][0-9]{9}$");
 
@@ -168,8 +168,10 @@ public class A_SignUp extends AppCompatActivity implements View.OnClickListener 
 
     private boolean checkName(String Data)
     {
-        if (TextUtils.isEmpty(Data))
+        if (TextUtils.isEmpty(Data)) {
+            Name1.setError("Name cannot be empty!!");
             return false;
+        }
         else if(!USER_NAME_PATTERN.matcher(Data).matches())
         {
               Name1.setError("Not a Valid Name!!");
@@ -181,8 +183,10 @@ public class A_SignUp extends AppCompatActivity implements View.OnClickListener 
 
     private boolean checkEmail(String Data)
     {
-        if (TextUtils.isEmpty(Data))
+        if (TextUtils.isEmpty(Data)) {
+           Email1.setError("Cannot be empty!!");
             return false;
+        }
         else if (!Patterns.EMAIL_ADDRESS.matcher(Data).matches())
         {
             Email1.setError("Not a Valid Email !!");
@@ -197,9 +201,11 @@ public class A_SignUp extends AppCompatActivity implements View.OnClickListener 
 
     private boolean checkPassword(String Data)
     {
-        if (TextUtils.isEmpty(Data))
+        if (TextUtils.isEmpty(Data)) {
+            Password1.setError("Password cannot be empty !!");
             return false;
-        else if(!PASSWORD_PATTERN.matcher(Data).matches())
+        }
+            else if(!PASSWORD_PATTERN.matcher(Data).matches())
         {
             Password1.setError("Password is too weak !!");
             return false;
@@ -213,6 +219,7 @@ public class A_SignUp extends AppCompatActivity implements View.OnClickListener 
         boolean flag=true;
         if (TextUtils.isEmpty(Data2))
         {
+            ConfirmPassword1.setError("Confirm Password Cannot be empty");
            flag=false;
         }
         else if(!PASSWORD_PATTERN.matcher(Data2).matches())
@@ -230,9 +237,11 @@ public class A_SignUp extends AppCompatActivity implements View.OnClickListener 
 
     private boolean checkPhoneNumber(String Data)
     {
-        if (TextUtils.isEmpty(Data))
+        if (TextUtils.isEmpty(Data)) {
+           Phone1.setError("Phone number cannot be Blank !!");
             return false;
-        else if(!PHONE_NUMBER_PATTERN.matcher(Data).matches())
+        }
+            else if(!PHONE_NUMBER_PATTERN.matcher(Data).matches())
         {
             Phone1.setError("Invalid PhoneNumber !!");
             return false;
