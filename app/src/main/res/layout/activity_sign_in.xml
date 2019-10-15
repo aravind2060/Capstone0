@@ -67,7 +67,7 @@
        <TextView
            android:layout_width="wrap_content"
            android:layout_height="wrap_content"
-           android:text="@string/Dont_have_account"
+           android:text="@string/Donot_have_account"
            />
        <TextView
            android:id="@+id/Sign_In_txt_SignUP_Link"

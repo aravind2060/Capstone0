@@ -6,7 +6,7 @@
     <string name="Confirm_Password">Confirm Password</string>
     <string name="Sign_In">Sign In</string>
     <string name="Sign_Up">SignUP</string>
-
+    <string name="Display_Name">Reddy</string>
     <string name="Full_Name">Enter Name</string>
     <string name="Gender_Type">Gender</string>
     <string name="Phone_Number">Phone Number</string>
@@ -16,11 +16,29 @@
         <item>Female</item>
     </array>
 
-    <string name="Dont_have_account">Don\'t Have Account?</string>
+    <string name="Donot_have_account">Don\'t Have Account?</string>
 
     <string name="Trouble_Logging_In">Trouble Logging in? </string>
 
     <string name="Reset">Reset Your Password</string>
     <string name="Send">Send</string>
     <string name="Otp">Enter Otp</string>
+    <string name="men_icon_name">Men </string>
+    <string name="women_icon_name">Women </string>
+    <string name="profile_icon_name">Profile </string>
+
+    <string name="Profile_Content_Description_Profile_Picture">This image is to display profile Picture</string>
+    <string name="Profile_Description_EditIcon">This is to edit something</string>
+    <string name="Profile_MyWishList">My WishList</string>
+    <string name="Profile_ViewAllOrders">View AllOrders</string>
+    <string name="Profile_MyOrders">My Orders</string>
+    <string name="Profile_MyOrders_ViewAll">View All Orders</string>
+    <string name="Profile_MyCart">MyCart</string>
+    <string name="Profile_MyCart_ViewAll">View Your Cart</string>
+    <string name="Profile_Settings">Account Settings</string>
+    <string name="Profile_Settings_Update">Update</string>
+    <string name="Profile_MyAddresses">My Addresses</string>
+    <string name="Profile_MyAddresses_Add">Change Address</string>
+    <string name="Profile_Logout">Logout</string>
+    <string name="Profile_Content_Description_Logout">This is to logout from application</string>
 </resources>

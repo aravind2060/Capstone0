@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/navigation_men"
+        android:icon="@drawable/men_icon"
+        android:title="@string/men_icon_name" />
+
+    <item
+        android:id="@+id/navigation_women"
+        android:icon="@drawable/women_icon"
+        android:title="@string/women_icon_name" />
+
+    <item
+        android:id="@+id/navigation_profile"
+        android:icon="@drawable/profile_icon"
+        android:title="@string/profile_icon_name"
+        />
+
+
+
+</menu>
