@@ -14,6 +14,7 @@
         android:roundIcon="@mipmap/launcher_icon_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <activity android:name=".BottomNavigationThings.Profile.A_AccountSettings"></activity>
         <activity
             android:name=".Login.A_SignIn"
             android:screenOrientation="portrait">
@@ -32,8 +33,8 @@
         <activity
             android:name=".MainActivity"
             android:screenOrientation="portrait" />
-        <activity android:name=".BottomNavigationThings.Profile.MyAddresses"/>
-        <activity android:name=".BottomNavigationThings.Profile.A_AddNewAddress"/>
+        <activity android:name=".BottomNavigationThings.Profile.A_MyAddresses" />
+        <activity android:name=".BottomNavigationThings.Profile.A_AddNewAddress" />
     </application>
 
 </manifest>

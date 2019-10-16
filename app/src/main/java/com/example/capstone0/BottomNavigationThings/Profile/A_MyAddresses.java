@@ -10,15 +10,19 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 
+import com.example.capstone0.Login.D_UserDataToStoreInFirebase;
 import com.example.capstone0.R;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
@@ -26,26 +30,45 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MyAddresses extends AppCompatActivity implements View.OnClickListener {
+public class A_MyAddresses extends AppCompatActivity implements View.OnClickListener, ValueEventListener {
 
     ListView listView;
     ArrayList<D_Address> d_addresseslist=new ArrayList<>();
     TextView addnewAddress;
     TextView noofaddressessshow;
     int noofaddressindb;
+    Toolbar toolbar;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_myaddresses);
-        listView=findViewById(R.id.MyAddress_Fragment_ListView);
-        noofaddressessshow=findViewById(R.id.MyAddress_Fragment_No_of_Address);
-        noofaddressessshow.setText(noofAddresses()+" "+noofaddressessshow.getText());
+
+        findViewByIds();
+        setToolbar();
+        noofAddresses();
+        noofaddressessshow.setText(noofaddressindb+" "+noofaddressessshow.getText());
         getAddressesFromFirebase();
-        addnewAddress=findViewById(R.id.MyAddress_TxtView_Add_New_Address);
         addnewAddress.setOnClickListener(this);
-        listView.setAdapter(new MyAdapter(getApplicationContext(),R.layout.single_address_show,d_addresseslist));
+        listView.setAdapter(new MyAdapter(A_MyAddresses.this,R.layout.single_address_show,d_addresseslist));
     }
 
+    public void findViewByIds()
+    {
+        toolbar=findViewById(R.id.Toolbar_MyAddress_Fragment);
+        addnewAddress=findViewById(R.id.MyAddress_TxtView_Add_New_Address);
+        listView=findViewById(R.id.MyAddress_Fragment_ListView);
+        noofaddressessshow=findViewById(R.id.MyAddress_Fragment_No_of_Address);
+    }
+    public void setToolbar()
+    {
+
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onBackPressed();
+            }
+        });
+    }
     @Override
     public void onClick(View v) {
          if (v.getId()==R.id.MyAddress_TxtView_Add_New_Address)
@@ -53,6 +76,8 @@ public class MyAddresses extends AppCompatActivity implements View.OnClickListen
             startActivity(new Intent(getApplicationContext(),A_AddNewAddress.class));
         }
     }
+
+
 
 
     class MyAdapter extends ArrayAdapter<D_Address> implements View.OnClickListener {
@@ -81,6 +106,7 @@ public class MyAddresses extends AppCompatActivity implements View.OnClickListen
             ImageView imageView=convertView.findViewById(R.id.Single_Address_ImgView_OverFlowMenu);
             name.setText(d_address.Name);
             phone.setText(d_address.Phone);
+            Toast.makeText(getApplicationContext(),"hi"+d_address.Name,Toast.LENGTH_SHORT).show();
             Showall.setText(d_address.HouseNo+","+d_address.Road_Area_Colony+","+d_address.City+",\n"+d_address.State+"-"+d_address.PinCode);
             imageView.setOnClickListener(this);
             return convertView;
@@ -93,44 +119,40 @@ public class MyAddresses extends AppCompatActivity implements View.OnClickListen
             {
 
             }
-
         }
 
     }
 
     public int noofAddresses()
     {
-        final int count[]=new int[1];
+        D_UserDataToStoreInFirebase d_userDataToStoreInFirebase=new D_UserDataToStoreInFirebase();
         FirebaseDatabase.getInstance().getReference("Users").child(FirebaseAuth.getInstance().getCurrentUser().getUid())
-                .child("noOfAddress").addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                if (dataSnapshot.exists())
-                {
-                    count[0]=dataSnapshot.getValue(Integer.class);
-                }
-            }
+                .addValueEventListener(this);
 
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
+        return noofaddressindb;
+    }
+    @Override
+    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+        D_UserDataToStoreInFirebase d_userDataToStoreInFirebase=new D_UserDataToStoreInFirebase();
+        d_userDataToStoreInFirebase=dataSnapshot.getValue(D_UserDataToStoreInFirebase.class);
+        noofaddressindb=d_userDataToStoreInFirebase.noOfAddress;
+    }
 
-            }
-        });
-        noofaddressindb=count[0];
-        return count[0];
+    @Override
+    public void onCancelled(@NonNull DatabaseError databaseError) {
+
     }
 
     public void getAddressesFromFirebase()
     {
+        DatabaseReference databaseReference=FirebaseDatabase.getInstance().getReference("Users").child(FirebaseAuth.getInstance().getCurrentUser().getUid());
         for (int i=1;i<=noofaddressindb;i++) {
-            FirebaseDatabase.getInstance().getReference("Users").child(FirebaseAuth.getInstance().getCurrentUser().getUid())
-                    .child("Addresses").addListenerForSingleValueEvent(new ValueEventListener() {
+
+            databaseReference.child("Addresses"+i).addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                     if (dataSnapshot.exists())
-                     {
                          d_addresseslist.add(dataSnapshot.getValue(D_Address.class));
-                     }
+
                 }
                 @Override
                 public void onCancelled(@NonNull DatabaseError databaseError) {

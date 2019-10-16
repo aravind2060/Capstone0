@@ -13,11 +13,14 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
 
+import com.example.capstone0.Login.D_UserDataToStoreInFirebase;
 import com.example.capstone0.R;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.textfield.TextInputEditText;
@@ -28,18 +31,21 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-public class A_AddNewAddress extends AppCompatActivity implements View.OnClickListener, OnTaskCompleted {
+public class A_AddNewAddress extends AppCompatActivity implements View.OnClickListener, OnTaskCompleted, ValueEventListener {
 
     Button save,gps;
     TextInputLayout textInputLayout1_pincode,textInputLayout2_houseNo,textInputLayout3_road,textInputLayout4_city,textInputLayout5_state,textInputLayout6_name,textInputLayout7_phone;
     TextInputEditText pincode,houseno,roaddno,city,state,phone,name;
     ImageView gpsIcon;
     D_Address d_address=new D_Address();
+    Toolbar toolbar;
+    int noofaddress=0;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.add_new_address);
         findViewByIds();
+        setToolbar();
 
     }
     public void findViewByIds()
@@ -66,9 +72,17 @@ public class A_AddNewAddress extends AppCompatActivity implements View.OnClickLi
         gps.setOnClickListener(this);
         save.setOnClickListener(this);
         gpsIcon.setOnClickListener(this);
-
+       toolbar=findViewById(R.id.Toolbar_Add_New_Address);
     }
-
+   public void setToolbar()
+   {
+       toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+           @Override
+           public void onClick(View v) {
+               onBackPressed();
+           }
+       });
+   }
     @Override
     public void onClick(View v) {
         if (v.getId()==R.id.Add_New_Address_Btn_Save)
@@ -87,50 +101,32 @@ public class A_AddNewAddress extends AppCompatActivity implements View.OnClickLi
     private void saveInFirebase() {
 
        int count_noof_address=noOfAddressesInFirebase();
-       count_noof_address++;
-
+       count_noof_address=count_noof_address+1;
         FirebaseDatabase.getInstance().getReference("Users").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("Addresses"+count_noof_address)
                 .setValue(d_address).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
                 if (task.isSuccessful())
                 {
-                    Toast.makeText(getApplicationContext(),"Address Stored in Firebase",Toast.LENGTH_LONG).show();
+                    Toast.makeText(getApplicationContext(),"Address Stored in FireBase",Toast.LENGTH_LONG).show();
                 }
                 else
                 {
-                    Toast.makeText(getApplicationContext(),"Unable to store in firebase "+task.getException().getMessage(),Toast.LENGTH_LONG).show();
+                    Toast.makeText(getApplicationContext(),"Unable to store in FireBase "+task.getException().getMessage(),Toast.LENGTH_LONG).show();
                 }
             }
         });
-        FirebaseDatabase.getInstance().getReference("Users").child(FirebaseAuth.getInstance().getCurrentUser().getUid())
-                .child("noOfAddress").setValue(count_noof_address).addOnCompleteListener(new OnCompleteListener<Void>() {
-            @Override
-            public void onComplete(@NonNull Task<Void> task) {
-                if (task.isSuccessful())
-                {
-                    Toast.makeText(getApplicationContext(),"Updated no-of-address",Toast.LENGTH_LONG).show();
-                }
-            }
-        });
+
+       FirebaseDatabase.getInstance().getReference("Users").child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+               .child("noOfAddress").setValue(count_noof_address);
+
     }
 
     public int noOfAddressesInFirebase()
     {
-        final int[] count = new int[1];
-        FirebaseDatabase.getInstance().getReference("Users").child(FirebaseAuth.getInstance().getCurrentUser().getUid())
-                .addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                        count[0] =Integer.parseInt(dataSnapshot.getValue(String.class));
-                    }
-
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                    }
-                });
-        return count[0];
+         FirebaseDatabase.getInstance().getReference().child("Users").child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                 .addValueEventListener(this);
+         return noofaddress;
     }
 
     private void requestPermission() {
@@ -140,7 +136,7 @@ public class A_AddNewAddress extends AppCompatActivity implements View.OnClickLi
         }
         else
         {
-            Toast.makeText(getApplicationContext(),"Please Turn On Gps",Toast.LENGTH_LONG).show();
+           // Toast.makeText(getApplicationContext(),"Please Turn On Gps",Toast.LENGTH_LONG).show();
             LocationServices.getFusedLocationProviderClient(getApplicationContext()).getLastLocation()
                     .addOnSuccessListener(new OnSuccessListener<Location>() {
                         @Override
@@ -175,7 +171,7 @@ public class A_AddNewAddress extends AppCompatActivity implements View.OnClickLi
     @Override
     public void onTaskCompletedListener(D_Address result) {
        d_address=result;
-       if (d_address.error!=null)
+       if (d_address.error==null)
        {
            pincode.setText(d_address.PinCode);
            houseno.setText(d_address.HouseNo);
@@ -303,4 +299,15 @@ public class A_AddNewAddress extends AppCompatActivity implements View.OnClickLi
     }
 
 
+    @Override
+    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+        D_UserDataToStoreInFirebase d_userDataToStoreInFirebase=new D_UserDataToStoreInFirebase();
+        d_userDataToStoreInFirebase=dataSnapshot.getValue(D_UserDataToStoreInFirebase.class);
+       noofaddress=d_userDataToStoreInFirebase.noOfAddress;
+    }
+
+    @Override
+    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+    }
 }

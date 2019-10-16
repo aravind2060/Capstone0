@@ -12,7 +12,6 @@ import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -59,7 +58,7 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
         }
         else if (v.getId()==R.id.Profile_Fragment_TxtView_Profile_MyAddresses)
         {
-          startActivity(new Intent(getContext(),MyAddresses.class));
+          startActivity(new Intent(getContext(), A_MyAddresses.class));
         }
     }
 }

@@ -13,4 +13,6 @@ public class D_UserDataToStoreInFirebase {
         noOfAddress=0;
     }
 
+    public D_UserDataToStoreInFirebase() {
+    }
 }
