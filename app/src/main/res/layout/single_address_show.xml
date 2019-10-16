@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+   <RelativeLayout
+       android:id="@+id/RelativeLayout1_SingleAddress"
+       android:layout_width="match_parent"
+       android:layout_height="wrap_content"
+       >
+       <TextView
+           android:id="@+id/Single_Address_Name"
+           android:layout_width="wrap_content"
+           android:layout_height="wrap_content"
+           android:text="G.Aravinda Reddy"
+           android:textSize="20sp"
+           android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle2"
+           />
+       <TextView
+           android:id="@+id/Single_Address_Address_Type"
+           android:layout_toRightOf="@id/Single_Address_Name"
+           android:layout_width="wrap_content"
+           android:layout_height="wrap_content"
+           android:background="@color/SilverGray"
+           android:text="Home"
+           android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1"
+           android:layout_marginLeft="10dp"
+           />
+       <ImageView
+           android:id="@+id/Single_Address_ImgView_OverFlowMenu"
+           android:layout_width="wrap_content"
+           android:layout_height="wrap_content"
+           android:src="@drawable/overflow_menu_icon"
+           android:layout_alignParentEnd="true"
+           />
+   </RelativeLayout>
+    <LinearLayout
+        android:id="@+id/RelativeLayout2_SingleAddress"
+        android:layout_below="@id/RelativeLayout1_SingleAddress"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        >
+        <TextView
+            android:id="@+id/Single_Address_TxtView_ShowAll_Data_Here"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+        <TextView
+            android:id="@+id/Single_Address_TxtView_Show_PhoneNumber"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="+91 9866772522"
+            android:layout_marginStart="15dp"
+            />
+    </LinearLayout>
+</RelativeLayout>

@@ -34,6 +34,8 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
        View view=inflater.inflate(R.layout.profile_fragment, container, false);
        ImageView signout=view.findViewById(R.id.Profile_Fragment_ImgView_Logout_Icon);
         TextView signout2=view.findViewById(R.id.Profile_Fragment_TxtView_Logout_Icon);
+        TextView viewalladdress=view.findViewById(R.id.Profile_Fragment_TxtView_Profile_MyAddresses);
+        viewalladdress.setOnClickListener(this);
         signout2.setOnClickListener(this);
        signout.setOnClickListener(this);
 
@@ -44,7 +46,7 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         mViewModel = ViewModelProviders.of(this).get(ProfileViewModel.class);
-        // TODO: Use the ViewModel
+
 
     }
 
@@ -54,6 +56,10 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
         {
             FirebaseAuth.getInstance().signOut();
             startActivity(new Intent(getContext(), A_SignIn.class));
+        }
+        else if (v.getId()==R.id.Profile_Fragment_TxtView_Profile_MyAddresses)
+        {
+          startActivity(new Intent(getContext(),MyAddresses.class));
         }
     }
 }

@@ -41,4 +41,7 @@
     <string name="Profile_MyAddresses_Add">Change Address</string>
     <string name="Profile_Logout">Logout</string>
     <string name="Profile_Content_Description_Logout">This is to logout from application</string>
+    <string name="Profile_MyWishList_View">Your WishList</string>
+    <string name="MyAddress_Fragment_Add_New_Address">+Add a New Address</string>
+    <string name="Add_New_Address">Add New Address</string>
 </resources>
