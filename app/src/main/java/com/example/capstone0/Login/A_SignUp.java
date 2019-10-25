@@ -118,7 +118,7 @@ public class A_SignUp extends AppCompatActivity implements View.OnClickListener 
                   public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful())
                         {
-                            D_UserDataToStoreInFirebase user=new D_UserDataToStoreInFirebase(Name.getEditableText().toString(),Email.getEditableText().toString(),Phone.getEditableText().toString(),Gender);
+                            D_UserDataToStoreInFirebase user=new D_UserDataToStoreInFirebase(Name.getEditableText().toString(),Email.getEditableText().toString(),Phone.getEditableText().toString(),Gender,Password.getEditableText().toString());
                             FirebaseDatabase.getInstance().getReference("Users")
                                     .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
                                     .setValue(user).addOnCompleteListener(new OnCompleteListener<Void>() {
@@ -152,6 +152,7 @@ public class A_SignUp extends AppCompatActivity implements View.OnClickListener 
                       if (task.isSuccessful())
                       {
                         Toast.makeText(getApplicationContext(),"Please Check Your Mail for verification!!",Toast.LENGTH_SHORT).show();
+                       onBackPressed();
                       }
                       else
                       {

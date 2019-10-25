@@ -8,7 +8,15 @@
    <RelativeLayout
        android:layout_width="match_parent"
        android:layout_height="match_parent">
-
+     <Button
+         android:id="@+id/Account_Settings_btn_Delete_Account"
+         android:layout_width="wrap_content"
+         android:layout_height="wrap_content"
+         android:background="@color/Green"
+         android:textColor="@color/White"
+         android:text="Delete Account"
+         android:layout_centerHorizontal="true"
+         />
 
    </RelativeLayout>
 </androidx.core.widget.NestedScrollView>

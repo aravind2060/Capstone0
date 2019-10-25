@@ -16,7 +16,7 @@ import com.example.capstone0.R;
 
 public class MenFragment extends Fragment {
 
-    private MenViewModel mViewModel;
+
 
     public static MenFragment newInstance() {
         return new MenFragment();
@@ -31,8 +31,6 @@ public class MenFragment extends Fragment {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        mViewModel = ViewModelProviders.of(this).get(MenViewModel.class);
-        // TODO: Use the ViewModel
 
     }
 

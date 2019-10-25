@@ -17,6 +17,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
+import com.example.capstone0.D_CurrentUser;
 import com.example.capstone0.Login.D_UserDataToStoreInFirebase;
 import com.example.capstone0.R;
 import com.google.firebase.auth.FirebaseAuth;
@@ -30,24 +31,22 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 import java.util.List;
 
-public class A_MyAddresses extends AppCompatActivity implements View.OnClickListener, ValueEventListener {
+public class A_MyAddresses extends AppCompatActivity implements View.OnClickListener{
 
     ListView listView;
     ArrayList<D_Address> d_addresseslist=new ArrayList<>();
     TextView addnewAddress;
     TextView noofaddressessshow;
-    int noofaddressindb;
+    int noofaddressindb= D_CurrentUser.getNoOfAddress();
     Toolbar toolbar;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_myaddresses);
-
         findViewByIds();
         setToolbar();
-        noofAddresses();
         noofaddressessshow.setText(noofaddressindb+" "+noofaddressessshow.getText());
-        getAddressesFromFirebase();
+        getAddressFromFirebase();
         addnewAddress.setOnClickListener(this);
         listView.setAdapter(new MyAdapter(A_MyAddresses.this,R.layout.single_address_show,d_addresseslist));
     }
@@ -93,12 +92,8 @@ public class A_MyAddresses extends AppCompatActivity implements View.OnClickList
         @NonNull
         @Override
         public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
-
             D_Address d_address=addressArrayList.get(position);
-            if (convertView==null)
-            {
-                convertView= LayoutInflater.from(getContext()).inflate(R.layout.single_address_show,parent,false);
-            }
+                convertView= LayoutInflater.from(context).inflate(R.layout.single_address_show,parent,false);
             TextView name=convertView.findViewById(R.id.Single_Address_Name);
             TextView phone=convertView.findViewById(R.id.Single_Address_TxtView_Show_PhoneNumber);
             TextView Showall=convertView.findViewById(R.id.Single_Address_TxtView_ShowAll_Data_Here);
@@ -106,7 +101,7 @@ public class A_MyAddresses extends AppCompatActivity implements View.OnClickList
             ImageView imageView=convertView.findViewById(R.id.Single_Address_ImgView_OverFlowMenu);
             name.setText(d_address.Name);
             phone.setText(d_address.Phone);
-            Toast.makeText(getApplicationContext(),"hi"+d_address.Name,Toast.LENGTH_SHORT).show();
+            AddressType.setText(d_address.AddressType);
             Showall.setText(d_address.HouseNo+","+d_address.Road_Area_Colony+","+d_address.City+",\n"+d_address.State+"-"+d_address.PinCode);
             imageView.setOnClickListener(this);
             return convertView;
@@ -123,27 +118,9 @@ public class A_MyAddresses extends AppCompatActivity implements View.OnClickList
 
     }
 
-    public int noofAddresses()
-    {
-        D_UserDataToStoreInFirebase d_userDataToStoreInFirebase=new D_UserDataToStoreInFirebase();
-        FirebaseDatabase.getInstance().getReference("Users").child(FirebaseAuth.getInstance().getCurrentUser().getUid())
-                .addValueEventListener(this);
 
-        return noofaddressindb;
-    }
-    @Override
-    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-        D_UserDataToStoreInFirebase d_userDataToStoreInFirebase=new D_UserDataToStoreInFirebase();
-        d_userDataToStoreInFirebase=dataSnapshot.getValue(D_UserDataToStoreInFirebase.class);
-        noofaddressindb=d_userDataToStoreInFirebase.noOfAddress;
-    }
 
-    @Override
-    public void onCancelled(@NonNull DatabaseError databaseError) {
-
-    }
-
-    public void getAddressesFromFirebase()
+    public void getAddressFromFirebase()
     {
         DatabaseReference databaseReference=FirebaseDatabase.getInstance().getReference("Users").child(FirebaseAuth.getInstance().getCurrentUser().getUid());
         for (int i=1;i<=noofaddressindb;i++) {
@@ -152,7 +129,6 @@ public class A_MyAddresses extends AppCompatActivity implements View.OnClickList
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                          d_addresseslist.add(dataSnapshot.getValue(D_Address.class));
-
                 }
                 @Override
                 public void onCancelled(@NonNull DatabaseError databaseError) {
@@ -162,5 +138,24 @@ public class A_MyAddresses extends AppCompatActivity implements View.OnClickList
         }
     }
 
-
+//  public void getAddressFromFirebase2()
+//  {
+//      final DatabaseReference databaseReference=FirebaseDatabase.getInstance().getReference("Users").child(FirebaseAuth.getInstance().getCurrentUser().getUid());
+//        databaseReference.addListenerForSingleValueEvent(this);
+//  }
+//    @Override
+//    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+//        if (dataSnapshot.hasChildren())
+//        {
+//            for (DataSnapshot dataSnapshot1:dataSnapshot.getChildren())
+//            {
+//                d_addresseslist.add(dataSnapshot1.getValue(D_Address.class));
+//            }
+//        }
+//    }
+//
+//    @Override
+//    public void onCancelled(@NonNull DatabaseError databaseError) {
+//
+//    }
 }

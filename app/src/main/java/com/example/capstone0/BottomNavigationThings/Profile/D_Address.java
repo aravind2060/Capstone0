@@ -9,7 +9,7 @@ public class D_Address {
     public String State;
     public String Name;
     public String Phone;
-    public int AddressType;
+    public String AddressType;
     public String error=null;
     /*
       @AddressType --> 0 is home Address
@@ -28,7 +28,7 @@ public class D_Address {
         State=null;
         Name=null;
         Phone=null;
-        AddressType=0;
+        AddressType=null;
         this.error=error;
     }
 }

@@ -8,6 +8,8 @@ import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -16,6 +18,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
 
+import com.example.capstone0.D_CurrentUser;
 import com.example.capstone0.Login.D_UserDataToStoreInFirebase;
 import com.example.capstone0.R;
 import com.google.android.gms.location.LocationServices;
@@ -31,7 +34,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-public class A_AddNewAddress extends AppCompatActivity implements View.OnClickListener, OnTaskCompleted, ValueEventListener {
+public class A_AddNewAddress extends AppCompatActivity implements View.OnClickListener, OnTaskCompleted, OnCompleteListener<Void>, RadioGroup.OnCheckedChangeListener {
 
     Button save,gps;
     TextInputLayout textInputLayout1_pincode,textInputLayout2_houseNo,textInputLayout3_road,textInputLayout4_city,textInputLayout5_state,textInputLayout6_name,textInputLayout7_phone;
@@ -39,7 +42,9 @@ public class A_AddNewAddress extends AppCompatActivity implements View.OnClickLi
     ImageView gpsIcon;
     D_Address d_address=new D_Address();
     Toolbar toolbar;
-    int noofaddress=0;
+    int noofaddress= D_CurrentUser.getNoOfAddress();
+    RadioGroup radioGroup;
+    String AddressType;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -65,6 +70,7 @@ public class A_AddNewAddress extends AppCompatActivity implements View.OnClickLi
         state=findViewById(R.id.Add_New_Address_TxtEditText_State);
         phone=findViewById(R.id.Add_New_Address_TxtEditText_Phone);
         name=findViewById(R.id.Add_New_Address_TxtEditText_Name);
+        radioGroup=findViewById(R.id.Add_New_Address_RadioBtnGroup);
 
         gps=findViewById(R.id.Add_New_Address_Use_Current_Location);
         save=findViewById(R.id.Add_New_Address_Btn_Save);
@@ -73,6 +79,7 @@ public class A_AddNewAddress extends AppCompatActivity implements View.OnClickLi
         save.setOnClickListener(this);
         gpsIcon.setOnClickListener(this);
        toolbar=findViewById(R.id.Toolbar_Add_New_Address);
+       radioGroup.setOnCheckedChangeListener(this);
     }
    public void setToolbar()
    {
@@ -87,10 +94,8 @@ public class A_AddNewAddress extends AppCompatActivity implements View.OnClickLi
     public void onClick(View v) {
         if (v.getId()==R.id.Add_New_Address_Btn_Save)
         {
-            if (checkPinCode() && checkHouseNo() && checkRoadNo() && checkCity() && checkState() && checkName() && checkPhoneNo())
-            {
+            if (checkPinCode() && checkHouseNo() && checkRoadNo() && checkCity() && checkState() && checkName() && checkPhoneNo() && checkAddressType())
                 saveInFirebase();
-            }
         }
         else if (v.getId()==R.id.Add_New_Address_Use_Current_Location || v.getId()==R.id.Add_New_Address_Gps_Icon)
         {
@@ -100,7 +105,7 @@ public class A_AddNewAddress extends AppCompatActivity implements View.OnClickLi
 
     private void saveInFirebase() {
 
-       int count_noof_address=noOfAddressesInFirebase();
+       int count_noof_address=noofaddress;
        count_noof_address=count_noof_address+1;
         FirebaseDatabase.getInstance().getReference("Users").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("Addresses"+count_noof_address)
                 .setValue(d_address).addOnCompleteListener(new OnCompleteListener<Void>() {
@@ -109,6 +114,7 @@ public class A_AddNewAddress extends AppCompatActivity implements View.OnClickLi
                 if (task.isSuccessful())
                 {
                     Toast.makeText(getApplicationContext(),"Address Stored in FireBase",Toast.LENGTH_LONG).show();
+                    onBackPressed();
                 }
                 else
                 {
@@ -118,16 +124,11 @@ public class A_AddNewAddress extends AppCompatActivity implements View.OnClickLi
         });
 
        FirebaseDatabase.getInstance().getReference("Users").child(FirebaseAuth.getInstance().getCurrentUser().getUid())
-               .child("noOfAddress").setValue(count_noof_address);
+               .child("noOfAddress").setValue(count_noof_address).addOnCompleteListener(this);
 
     }
 
-    public int noOfAddressesInFirebase()
-    {
-         FirebaseDatabase.getInstance().getReference().child("Users").child(FirebaseAuth.getInstance().getCurrentUser().getUid())
-                 .addValueEventListener(this);
-         return noofaddress;
-    }
+
 
     private void requestPermission() {
         if (ActivityCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.ACCESS_FINE_LOCATION)!=PackageManager.PERMISSION_GRANTED)
@@ -297,17 +298,33 @@ public class A_AddNewAddress extends AppCompatActivity implements View.OnClickLi
             return true;
         }
     }
-
-
-    @Override
-    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-        D_UserDataToStoreInFirebase d_userDataToStoreInFirebase=new D_UserDataToStoreInFirebase();
-        d_userDataToStoreInFirebase=dataSnapshot.getValue(D_UserDataToStoreInFirebase.class);
-       noofaddress=d_userDataToStoreInFirebase.noOfAddress;
+    public boolean checkAddressType()
+    {
+      if (AddressType.isEmpty())
+      {
+          Toast.makeText(getApplicationContext(),"Please select Address Type",Toast.LENGTH_SHORT).show();
+        return false;
+      }
+      else
+      {
+          d_address.AddressType=AddressType;
+          return true;
+      }
     }
 
     @Override
-    public void onCancelled(@NonNull DatabaseError databaseError) {
+    public void onComplete(@NonNull Task<Void> task) {
+        if (task.isSuccessful())
+            D_CurrentUser.noOfAddress=noofaddress+1;
+    }
 
+    @Override
+    public void onCheckedChanged(RadioGroup group, int checkedId) {
+        if (checkedId==R.id.Add_New_Address_RadioBtn_Home)
+        {
+            AddressType="Home";
+        }
+        else
+            AddressType="Office";
     }
 }

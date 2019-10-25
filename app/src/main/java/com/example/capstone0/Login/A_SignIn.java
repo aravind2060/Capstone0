@@ -19,6 +19,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import com.example.capstone0.BroadcastReceiver.InternetConnection;
+import com.example.capstone0.D_CurrentUser;
 import com.example.capstone0.MainActivity;
 import com.example.capstone0.R;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
@@ -54,7 +55,7 @@ import java.util.regex.Pattern;
 import static com.example.capstone0.BroadcastReceiver.InternetConnection.IS_NETWORK_AVAILABLE;
 
 
-public class A_SignIn extends AppCompatActivity implements View.OnClickListener {
+public class A_SignIn extends AppCompatActivity implements View.OnClickListener, ValueEventListener {
 
     Button SignIn;
     TextInputEditText Email,Password;
@@ -101,8 +102,14 @@ public class A_SignIn extends AppCompatActivity implements View.OnClickListener 
         FirebaseUser currentUser=firebaseAuth.getCurrentUser();
         if (currentUser!=null && currentUser.isEmailVerified())
         {
+           getCurrentUserInfo();
            startActivity(new Intent(getApplicationContext(),MainActivity.class));
         }
+    }
+
+    private void getCurrentUserInfo() {
+        FirebaseDatabase.getInstance().getReference("Users").child(firebaseAuth.getCurrentUser().getUid())
+                .addValueEventListener(this);
     }
 
     @Override
@@ -240,7 +247,7 @@ public class A_SignIn extends AppCompatActivity implements View.OnClickListener 
            }
            else
                Name=personGivenName;
-           final D_UserDataToStoreInFirebase d_userDataToStoreInFirebase=new D_UserDataToStoreInFirebase(Name,Email,Phone,Gender);
+           final D_UserDataToStoreInFirebase d_userDataToStoreInFirebase=new D_UserDataToStoreInFirebase(Name,Email,Phone,Gender,null);
           DatabaseReference databaseReference= FirebaseDatabase.getInstance().getReference("Users");
           databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
               @Override
@@ -367,4 +374,19 @@ public class A_SignIn extends AppCompatActivity implements View.OnClickListener 
    }
 
 
+    @Override
+    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+        D_UserDataToStoreInFirebase d_userDataToStoreInFirebase=new D_UserDataToStoreInFirebase();
+        d_userDataToStoreInFirebase=dataSnapshot.getValue(D_UserDataToStoreInFirebase.class);
+        D_CurrentUser.Gender= d_userDataToStoreInFirebase != null ? d_userDataToStoreInFirebase.Gender : "Male";
+        D_CurrentUser.Name=d_userDataToStoreInFirebase.Name;
+        D_CurrentUser.Phone=d_userDataToStoreInFirebase.Phone;
+        D_CurrentUser.Email=d_userDataToStoreInFirebase.Phone;
+        D_CurrentUser.noOfAddress=d_userDataToStoreInFirebase.noOfAddress;
+    }
+
+    @Override
+    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+    }
 }
