@@ -4,6 +4,8 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
+import android.os.AsyncTask;
 import android.os.Bundle;
 
 import android.text.TextUtils;
@@ -61,7 +63,8 @@ public class A_SignIn extends AppCompatActivity implements View.OnClickListener,
     TextInputEditText Email,Password;
     TextInputLayout Email1,Password1;
     SignInButton GoogleSignInBtn;
-
+      DatabaseReference databaseReference;
+      boolean flag=false;
     private static final Pattern PASSWORD_PATTERN =
             Pattern.compile("^" +
                     //"(?=.*[0-9])" +         //at least 1 digit
@@ -102,14 +105,14 @@ public class A_SignIn extends AppCompatActivity implements View.OnClickListener,
         FirebaseUser currentUser=firebaseAuth.getCurrentUser();
         if (currentUser!=null && currentUser.isEmailVerified())
         {
-           getCurrentUserInfo();
+            getCurrentUserInfo();
+          // getDataFromSharedPreferences();
            startActivity(new Intent(getApplicationContext(),MainActivity.class));
         }
     }
 
     private void getCurrentUserInfo() {
-        FirebaseDatabase.getInstance().getReference("Users").child(firebaseAuth.getCurrentUser().getUid())
-                .addValueEventListener(this);
+       databaseReference= FirebaseDatabase.getInstance().getReference("Users").child(firebaseAuth.getCurrentUser().getUid());
     }
 
     @Override
@@ -230,8 +233,8 @@ public class A_SignIn extends AppCompatActivity implements View.OnClickListener,
             //Uri personPhoto = acct.getPhotoUrl();
 
            String Email=personEmail;
-           String Phone=null;
-           String Gender=null;
+           String Phone="";
+           String Gender="";
            String Name;
            if (TextUtils.isEmpty(personGivenName))
            {
@@ -378,15 +381,48 @@ public class A_SignIn extends AppCompatActivity implements View.OnClickListener,
     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
         D_UserDataToStoreInFirebase d_userDataToStoreInFirebase=new D_UserDataToStoreInFirebase();
         d_userDataToStoreInFirebase=dataSnapshot.getValue(D_UserDataToStoreInFirebase.class);
-        D_CurrentUser.Gender= d_userDataToStoreInFirebase != null ? d_userDataToStoreInFirebase.Gender : "Male";
-        D_CurrentUser.Name=d_userDataToStoreInFirebase.Name;
-        D_CurrentUser.Phone=d_userDataToStoreInFirebase.Phone;
-        D_CurrentUser.Email=d_userDataToStoreInFirebase.Phone;
-        D_CurrentUser.noOfAddress=d_userDataToStoreInFirebase.noOfAddress;
+        D_CurrentUser.setEmail(d_userDataToStoreInFirebase.Email);
+        D_CurrentUser.setName(!TextUtils.isEmpty(d_userDataToStoreInFirebase.Name)?d_userDataToStoreInFirebase.Name:null);
+        D_CurrentUser.setPhone(!TextUtils.isEmpty(d_userDataToStoreInFirebase.Phone)?d_userDataToStoreInFirebase.Phone:null);
+        D_CurrentUser.setGender(!TextUtils.isEmpty(d_userDataToStoreInFirebase.Name)?d_userDataToStoreInFirebase.Gender:"Male");
+        D_CurrentUser.setNoOfAddress(d_userDataToStoreInFirebase.noOfAddress);
+        setDataIntoSharedPreference();
     }
 
     @Override
     public void onCancelled(@NonNull DatabaseError databaseError) {
 
     }
+
+    private void getDataFromSharedPreferences()
+    {
+        SharedPreferences sharedPreferences=getSharedPreferences("CurrentLoggedInUserDetails",0);
+       String EmailData=sharedPreferences.getString("Email",null);
+       if (!TextUtils.isEmpty(EmailData))
+       {
+           D_CurrentUser.setEmail(EmailData);
+           D_CurrentUser.setGender(sharedPreferences.getString("Gender","Male"));
+           D_CurrentUser.setName(sharedPreferences.getString("Name",null));
+           D_CurrentUser.setNoOfAddress(sharedPreferences.getInt("noOfAddress",0));
+           D_CurrentUser.setPhone(sharedPreferences.getString("Phone",null));
+       }
+       else
+           getCurrentUserInfo();
+    }
+    private void setDataIntoSharedPreference()
+    {
+        SharedPreferences sharedPreferences=getSharedPreferences("CurrentLoggedInUserDetails",0);
+        SharedPreferences.Editor editor=sharedPreferences.edit();
+        editor.putString("Name",D_CurrentUser.getName());
+        editor.putString("Email",D_CurrentUser.getName());
+        editor.putString("Gender",D_CurrentUser.getGender());
+        editor.putString("Phone",D_CurrentUser.getPhone());
+        editor.putInt("noOfAddress",D_CurrentUser.getNoOfAddress());
+        editor.apply();
+    }
+
+
+
+
+
 }

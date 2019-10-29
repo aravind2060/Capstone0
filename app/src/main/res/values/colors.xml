@@ -8,5 +8,7 @@
     <color name="White">#fff</color>
     <color name="DodgerBlue">#1E90FF</color>
     <color name="SilverGray">#C0C0C0</color>
-
+    <color name="DarkGreen">#4C9A2A</color>
+    <color name="Black">#000</color>
+    <color name="LigherGray">#676767</color>
 </resources>
