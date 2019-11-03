@@ -14,7 +14,10 @@
         android:roundIcon="@mipmap/launcher_icon_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".BottomNavigationThings.Profile.A_AccountSettings"></activity>
+        <activity android:name=".BottomNavigationThings.Profile.A_WishListedProducts"></activity>
+        <activity android:name=".BottomNavigationThings.Profile.A_MyOrders" />
+        <activity android:name=".BottomNavigationThings.MenShoes.CompleteViewOfProduct" />
+        <activity android:name=".BottomNavigationThings.Profile.A_AccountSettings" />
         <activity
             android:name=".Login.A_SignIn"
             android:screenOrientation="portrait">

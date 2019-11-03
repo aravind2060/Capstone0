@@ -1,9 +1,6 @@
 package com.example.capstone0.Login;
 
-import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -18,9 +15,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
-import com.example.capstone0.BroadcastReceiver.InternetConnection;
 import com.example.capstone0.D_CurrentUser;
 import com.example.capstone0.MainActivity;
 import com.example.capstone0.R;
@@ -32,11 +27,9 @@ import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
-import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.FirebaseNetworkException;
-import com.google.firebase.auth.ActionCodeSettings;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
@@ -54,10 +47,8 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.regex.Pattern;
 
-import static com.example.capstone0.BroadcastReceiver.InternetConnection.IS_NETWORK_AVAILABLE;
 
-
-public class A_SignIn extends AppCompatActivity implements View.OnClickListener, ValueEventListener {
+public class A_SignIn extends AppCompatActivity implements View.OnClickListener {
 
     Button SignIn;
     TextInputEditText Email,Password;
@@ -105,15 +96,12 @@ public class A_SignIn extends AppCompatActivity implements View.OnClickListener,
         FirebaseUser currentUser=firebaseAuth.getCurrentUser();
         if (currentUser!=null && currentUser.isEmailVerified())
         {
-            getCurrentUserInfo();
-          // getDataFromSharedPreferences();
+            getDataFromSharedPreferences();
+            loadDataOfCurrentUserDataUsingAsyncTaskClass();
            startActivity(new Intent(getApplicationContext(),MainActivity.class));
         }
     }
 
-    private void getCurrentUserInfo() {
-       databaseReference= FirebaseDatabase.getInstance().getReference("Users").child(firebaseAuth.getCurrentUser().getUid());
-    }
 
     @Override
     public void onClick(View v)
@@ -250,7 +238,7 @@ public class A_SignIn extends AppCompatActivity implements View.OnClickListener,
            }
            else
                Name=personGivenName;
-           final D_UserDataToStoreInFirebase d_userDataToStoreInFirebase=new D_UserDataToStoreInFirebase(Name,Email,Phone,Gender,null);
+           final D_UserDataToStoreInFirebase d_userDataToStoreInFirebase=new D_UserDataToStoreInFirebase(Name,Email,Phone,Gender,"");
           DatabaseReference databaseReference= FirebaseDatabase.getInstance().getReference("Users");
           databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
               @Override
@@ -294,6 +282,7 @@ public class A_SignIn extends AppCompatActivity implements View.OnClickListener,
                {
                   if (firebaseAuth.getCurrentUser().isEmailVerified())
                   {
+                      new ASyncTaskToFetchcurrentUserData().execute();
                       Toast.makeText(getApplicationContext(),"Login Success",Toast.LENGTH_LONG).show();
                       startActivity(new Intent(getApplicationContext(),MainActivity.class));
                   }
@@ -355,7 +344,6 @@ public class A_SignIn extends AppCompatActivity implements View.OnClickListener,
         }
     }
 
-
 /*
     @chkPasswordOffline
    is to validate password i.e whether empty or it followed standard
@@ -376,53 +364,140 @@ public class A_SignIn extends AppCompatActivity implements View.OnClickListener,
          return true;
    }
 
-
-    @Override
-    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-        D_UserDataToStoreInFirebase d_userDataToStoreInFirebase=new D_UserDataToStoreInFirebase();
-        d_userDataToStoreInFirebase=dataSnapshot.getValue(D_UserDataToStoreInFirebase.class);
-        D_CurrentUser.setEmail(d_userDataToStoreInFirebase.Email);
-        D_CurrentUser.setName(!TextUtils.isEmpty(d_userDataToStoreInFirebase.Name)?d_userDataToStoreInFirebase.Name:null);
-        D_CurrentUser.setPhone(!TextUtils.isEmpty(d_userDataToStoreInFirebase.Phone)?d_userDataToStoreInFirebase.Phone:null);
-        D_CurrentUser.setGender(!TextUtils.isEmpty(d_userDataToStoreInFirebase.Name)?d_userDataToStoreInFirebase.Gender:"Male");
-        D_CurrentUser.setNoOfAddress(d_userDataToStoreInFirebase.noOfAddress);
-        setDataIntoSharedPreference();
-    }
-
-    @Override
-    public void onCancelled(@NonNull DatabaseError databaseError) {
-
-    }
-
     private void getDataFromSharedPreferences()
     {
         SharedPreferences sharedPreferences=getSharedPreferences("CurrentLoggedInUserDetails",0);
-       String EmailData=sharedPreferences.getString("Email",null);
+       String EmailData=sharedPreferences.getString("Email","");
        if (!TextUtils.isEmpty(EmailData))
        {
            D_CurrentUser.setEmail(EmailData);
            D_CurrentUser.setGender(sharedPreferences.getString("Gender","Male"));
-           D_CurrentUser.setName(sharedPreferences.getString("Name",null));
+           D_CurrentUser.setName(sharedPreferences.getString("Name",""));
            D_CurrentUser.setNoOfAddress(sharedPreferences.getInt("noOfAddress",0));
-           D_CurrentUser.setPhone(sharedPreferences.getString("Phone",null));
+           D_CurrentUser.setPhone(sharedPreferences.getString("Phone",""));
+           D_CurrentUser.setNoOfWishListedProducts(sharedPreferences.getInt("noOfWishListedProducts",0));
+           D_CurrentUser.setNoOfPreviousOrders(sharedPreferences.getInt("noOfPreviousOrders",0));
+           D_CurrentUser.setNoOfProductsInCart(sharedPreferences.getInt("noOfProductsInCart",0));
        }
-       else
-           getCurrentUserInfo();
     }
-    private void setDataIntoSharedPreference()
+    private  void setDataIntoSharedPreference()
     {
         SharedPreferences sharedPreferences=getSharedPreferences("CurrentLoggedInUserDetails",0);
         SharedPreferences.Editor editor=sharedPreferences.edit();
         editor.putString("Name",D_CurrentUser.getName());
-        editor.putString("Email",D_CurrentUser.getName());
+        editor.putString("Email",D_CurrentUser.getEmail());
         editor.putString("Gender",D_CurrentUser.getGender());
         editor.putString("Phone",D_CurrentUser.getPhone());
         editor.putInt("noOfAddress",D_CurrentUser.getNoOfAddress());
-        editor.apply();
+        editor.putInt("noOfWishListedProducts",D_CurrentUser.getNoOfWishListedProducts());
+        editor.putInt("noOfPreviousOrders",D_CurrentUser.getNoOfPreviousOrders());
+        editor.putInt("noOfProductsInCart",D_CurrentUser.getNoOfProductsInCart());
+        editor.commit();
     }
 
+  private void loadDataOfCurrentUserDataUsingAsyncTaskClass()
+  {
+      new ASyncTaskToFetchcurrentUserData().execute();
+  }
 
 
+    class ASyncTaskToFetchcurrentUserData extends AsyncTask<Void,Void,Boolean> {
 
+        boolean isSuccess=true;
+        @Override
+        protected Boolean doInBackground(Void... voids) {
+
+            DatabaseReference databaseReference= FirebaseDatabase.getInstance().getReference("Users").child(FirebaseAuth.getInstance().getCurrentUser().getUid());
+            databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    if (dataSnapshot.exists())
+                    {
+                        D_UserDataToStoreInFirebase d_currentUser=dataSnapshot.getValue(D_UserDataToStoreInFirebase.class);
+                        if (d_currentUser!=null) {
+                            setData(d_currentUser);
+                            isSuccess=true;
+                            Log.e("Astask",d_currentUser.Email);
+                        }
+                        else
+                        {
+                            Log.e("ASTaskCurrentUserData","Unable to get current user data");
+                            isSuccess=false;
+                        }
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                }
+            });
+
+            return isSuccess;
+        }
+
+        private void setData(D_UserDataToStoreInFirebase d_currentUser) {
+            String Name,Phone,Email,Gender;
+            int noOfAddress,noOfPreviousOrders,noOfProductsInCart,noOfWishListedProducts;
+            if (d_currentUser.Name==null)
+                Name="";
+            else
+                Name=d_currentUser.Name;
+            if (d_currentUser.Phone==null)
+                Phone="";
+            else
+                Phone=d_currentUser.Phone;
+            if (d_currentUser.Email==null)
+                Email="";
+            else
+                Email=d_currentUser.Email;
+            if (d_currentUser.Gender==null)
+                Gender="";
+            else
+                Gender=d_currentUser.Gender;
+            if (d_currentUser.noOfAddress==0)
+                noOfAddress=0;
+            else if (d_currentUser.noOfAddress>=1)
+                noOfAddress=d_currentUser.noOfAddress;
+            else
+                noOfAddress=0;
+            if (d_currentUser.noPreviousOrders==0)
+                noOfPreviousOrders=0;
+            else if (d_currentUser.noPreviousOrders>=1)
+                noOfPreviousOrders=d_currentUser.noPreviousOrders;
+            else
+                noOfPreviousOrders=0;
+            if (d_currentUser.noOfItemsInCart==0)
+                noOfProductsInCart=0;
+            else if (d_currentUser.noOfItemsInCart>=1)
+                noOfProductsInCart=d_currentUser.noOfItemsInCart;
+            else
+                noOfProductsInCart=0;
+            if (d_currentUser.noOfWishListedProducts==0)
+                noOfWishListedProducts=0;
+            else if (d_currentUser.noOfWishListedProducts>=1)
+                noOfWishListedProducts=d_currentUser.noOfWishListedProducts;
+            else
+                noOfWishListedProducts=0;
+            D_CurrentUser.setName(Name);
+            D_CurrentUser.setPhone(Phone);
+            D_CurrentUser.setEmail(Email);
+            D_CurrentUser.setGender(Gender);
+            D_CurrentUser.setNoOfProductsInCart(noOfProductsInCart);
+            D_CurrentUser.setNoOfAddress(noOfAddress);
+            D_CurrentUser.setNoOfPreviousOrders(noOfPreviousOrders);
+            D_CurrentUser.setNoOfWishListedProducts(noOfWishListedProducts);
+        }
+
+        @Override
+        protected void onPostExecute(Boolean aBoolean) {
+            Toast.makeText(A_SignIn.this, ""+aBoolean, Toast.LENGTH_SHORT).show();
+            if (aBoolean)
+            {
+             setDataIntoSharedPreference();
+            }
+            super.onPostExecute(aBoolean);
+        }
+    }
 
 }

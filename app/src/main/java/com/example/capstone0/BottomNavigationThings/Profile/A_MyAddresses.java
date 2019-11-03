@@ -2,7 +2,9 @@ package com.example.capstone0.BottomNavigationThings.Profile;
 
 import android.content.Context;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,34 +23,37 @@ import com.example.capstone0.D_CurrentUser;
 import com.example.capstone0.Login.D_UserDataToStoreInFirebase;
 import com.example.capstone0.R;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.GenericTypeIndicator;
 import com.google.firebase.database.ValueEventListener;
 
 
 import java.util.ArrayList;
 import java.util.List;
-
-public class A_MyAddresses extends AppCompatActivity implements View.OnClickListener{
+interface TaskCompletedFetchingAddress
+{
+    void TaskCompletedListenerForFetchingAddress(ArrayList<D_Address> d_addressArrayList);
+}
+public class A_MyAddresses extends AppCompatActivity implements View.OnClickListener, TaskCompletedFetchingAddress {
 
     ListView listView;
-    ArrayList<D_Address> d_addresseslist=new ArrayList<>();
+    ArrayList<D_Address> d_addresseslist;
     TextView addnewAddress;
     TextView noofaddressessshow;
     int noofaddressindb= D_CurrentUser.getNoOfAddress();
     Toolbar toolbar;
+    MyAdapter myAdapter;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_myaddresses);
         findViewByIds();
-        setToolbar();
-        noofaddressessshow.setText(noofaddressindb+" "+noofaddressessshow.getText());
         getAddressFromFirebase();
-        addnewAddress.setOnClickListener(this);
-        listView.setAdapter(new MyAdapter(A_MyAddresses.this,R.layout.single_address_show,d_addresseslist));
+
     }
 
     public void findViewByIds()
@@ -57,16 +62,19 @@ public class A_MyAddresses extends AppCompatActivity implements View.OnClickList
         addnewAddress=findViewById(R.id.MyAddress_TxtView_Add_New_Address);
         listView=findViewById(R.id.MyAddress_Fragment_ListView);
         noofaddressessshow=findViewById(R.id.MyAddress_Fragment_No_of_Address);
-    }
-    public void setToolbar()
-    {
-
+        addnewAddress.setOnClickListener(this);
+        noofaddressessshow.setText(noofaddressindb+" "+noofaddressessshow.getText());
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 onBackPressed();
             }
         });
+    }
+    private void setListView()
+    {
+        myAdapter=new MyAdapter(A_MyAddresses.this,R.layout.single_address_show,d_addresseslist);
+        listView.setAdapter(myAdapter);
     }
     @Override
     public void onClick(View v) {
@@ -76,7 +84,12 @@ public class A_MyAddresses extends AppCompatActivity implements View.OnClickList
         }
     }
 
-
+    @Override
+    public void TaskCompletedListenerForFetchingAddress(ArrayList<D_Address> d_addressArrayList) {
+     d_addresseslist=d_addressArrayList;
+        setListView();
+     myAdapter.notifyDataSetChanged();
+    }
 
 
     class MyAdapter extends ArrayAdapter<D_Address> implements View.OnClickListener {
@@ -93,7 +106,8 @@ public class A_MyAddresses extends AppCompatActivity implements View.OnClickList
         @Override
         public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
             D_Address d_address=addressArrayList.get(position);
-                convertView= LayoutInflater.from(context).inflate(R.layout.single_address_show,parent,false);
+                if (convertView==null)
+                 convertView= LayoutInflater.from(context).inflate(R.layout.single_address_show,parent,false);
             TextView name=convertView.findViewById(R.id.Single_Address_Name);
             TextView phone=convertView.findViewById(R.id.Single_Address_TxtView_Show_PhoneNumber);
             TextView Showall=convertView.findViewById(R.id.Single_Address_TxtView_ShowAll_Data_Here);
@@ -122,40 +136,42 @@ public class A_MyAddresses extends AppCompatActivity implements View.OnClickList
 
     public void getAddressFromFirebase()
     {
-        DatabaseReference databaseReference=FirebaseDatabase.getInstance().getReference("Users").child(FirebaseAuth.getInstance().getCurrentUser().getUid());
-        for (int i=1;i<=noofaddressindb;i++) {
-
-            databaseReference.child("Addresses"+i).addListenerForSingleValueEvent(new ValueEventListener() {
-                @Override
-                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                         d_addresseslist.add(dataSnapshot.getValue(D_Address.class));
-                }
-                @Override
-                public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                }
-            });
-        }
+      new AsyncTaskToFetchAddressFromFireBase(A_MyAddresses.this).execute();
     }
 
-//  public void getAddressFromFirebase2()
-//  {
-//      final DatabaseReference databaseReference=FirebaseDatabase.getInstance().getReference("Users").child(FirebaseAuth.getInstance().getCurrentUser().getUid());
-//        databaseReference.addListenerForSingleValueEvent(this);
-//  }
-//    @Override
-//    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-//        if (dataSnapshot.hasChildren())
-//        {
-//            for (DataSnapshot dataSnapshot1:dataSnapshot.getChildren())
-//            {
-//                d_addresseslist.add(dataSnapshot1.getValue(D_Address.class));
-//            }
-//        }
-//    }
-//
-//    @Override
-//    public void onCancelled(@NonNull DatabaseError databaseError) {
-//
-//    }
+   class AsyncTaskToFetchAddressFromFireBase extends AsyncTask<Integer,Void,ArrayList<D_Address>>
+   {
+       TaskCompletedFetchingAddress taskCompletedFetchingAddress;
+       AsyncTaskToFetchAddressFromFireBase(TaskCompletedFetchingAddress taskCompletedFetchingAddress)
+       {
+           this.taskCompletedFetchingAddress=taskCompletedFetchingAddress;
+       }
+       ArrayList<D_Address> d_addressArrayList;
+       @Override
+       protected ArrayList<D_Address> doInBackground(Integer... integers) {
+
+             DatabaseReference databaseReference=FirebaseDatabase.getInstance().getReference("Users").child(FirebaseAuth.getInstance().getCurrentUser().getUid());
+              databaseReference.addValueEventListener(new ValueEventListener() {
+                  @Override
+                  public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                      GenericTypeIndicator<ArrayList<D_Address>> genericTypeIndicator=new GenericTypeIndicator<ArrayList<D_Address>>() {};
+                      d_addressArrayList=dataSnapshot.getValue(genericTypeIndicator);
+                      Log.e("A_MyAddress","Address is:"+d_addressArrayList.get(0).AddressType);
+                  }
+
+                  @Override
+                  public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                  }
+              });
+           return d_addressArrayList;
+       }
+
+       @Override
+       protected void onPostExecute(ArrayList<D_Address> d_addresses) {
+             taskCompletedFetchingAddress.TaskCompletedListenerForFetchingAddress(d_addresses);
+           super.onPostExecute(d_addresses);
+       }
+   }
+
 }

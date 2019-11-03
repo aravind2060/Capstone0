@@ -54,12 +54,12 @@
             android:layout_height="wrap_content"
             app:cardUseCompatPadding="true"
             >
-        <ListView
-            android:id="@+id/MyAddress_Fragment_ListView"
-            android:layout_below="@id/MyAddress_Fragment_No.of_Address"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            />
+
+            <ListView
+                android:id="@+id/MyAddress_Fragment_ListView"
+                android:layout_width="470dp"
+                android:layout_height="272dp"
+                android:layout_below="@id/MyAddress_Fragment_No.of_Address" />
         </com.google.android.material.card.MaterialCardView>
     </RelativeLayout>
 </androidx.core.widget.NestedScrollView>

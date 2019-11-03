@@ -16,21 +16,17 @@ import java.util.Locale;
 interface OnTaskCompleted {
     void onTaskCompletedListener(D_Address result);
 }
-public class ASyncTaskToFetchFromInternet extends AsyncTask<Location,Void,D_Address>
+public class ASyncTaskToFetchAddressUsingGps extends AsyncTask<Location,Void,D_Address>
 {
 
    private Context context;
    private OnTaskCompleted taskCompleted;
     private static final String LOG_TAG="FetchAddressFrom";
-     public ASyncTaskToFetchFromInternet(Context context,OnTaskCompleted taskCompleted)
+     public ASyncTaskToFetchAddressUsingGps(Context context, OnTaskCompleted taskCompleted)
      {
          this.context=context;
          this.taskCompleted=taskCompleted;
      }
-
-    public ASyncTaskToFetchFromInternet(OnTaskCompleted onTaskCompleted) {
-        this.taskCompleted=onTaskCompleted;
-    }
 
 
     @Override

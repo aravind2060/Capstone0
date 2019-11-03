@@ -2,23 +2,51 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".BottomNavigationThings.MenShoes.CompleteViewOfProduct">
+    <androidx.appcompat.widget.Toolbar
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:id="@+id/Toolbar_complete_view_Of_Product"
+        app:title="Product"
+        app:titleTextColor="@color/White"
+        android:background="@color/DodgerBlue"
+        app:navigationIcon="@drawable/back_navigation"
+        />
     <ImageView
         android:id="@+id/ImageOfProduct"
+        android:layout_below="@id/Toolbar_complete_view_Of_Product"
         android:layout_width="match_parent"
         android:layout_height="300dp"
         />
     <TextView
-        android:id="@+id/NameOfProduct"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Add To WishList"
         android:layout_below="@id/ImageOfProduct"
+        />
+    <ImageView
+        android:id="@+id/Bookmark_Image"
+        android:layout_below="@id/ImageOfProduct"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:src="@drawable/bookmark_black"
+        />
+    <TextView
+        android:id="@+id/NameOfProduct"
+        android:layout_below="@id/Bookmark_Image"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         />
     <TextView
-       android:id="@+id/ProductDescriptionTitle"
-       android:layout_below="@id/NameOfProduct"
-       android:layout_width="match_parent"
-       android:layout_height="wrap_content"/>
+        android:id="@+id/ProductDescriptionTitle"
+        android:layout_below="@id/NameOfProduct"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="ProductDescription"
+        />
     <TextView
         android:id="@+id/ProductDescription"
         android:layout_below="@id/ProductDescriptionTitle"
@@ -29,9 +57,12 @@
         android:id="@+id/SizeLabel"
         android:layout_below="@id/ProductDescription"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+        android:layout_height="wrap_content"
+        android:text="Size"
+        />
     <LinearLayout
         android:id="@+id/LinearLayout_Sizes"
+        android:layout_below="@id/SizeLabel"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
@@ -51,7 +82,7 @@
             android:background="@color/DodgerBlue"
             android:textColor="@color/White"
             android:text="8"
-           android:layout_marginStart="3dp"
+            android:layout_marginStart="3dp"
             />
         <Button
             android:id="@+id/Size_9"
@@ -76,7 +107,9 @@
         android:id="@+id/QuantityLabel"
         android:layout_below="@id/LinearLayout_Sizes"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+        android:layout_height="wrap_content"
+        android:text="Quantity"
+        />
     <LinearLayout
         android:id="@+id/LinearLayout_Quantity"
         android:layout_below="@id/QuantityLabel"

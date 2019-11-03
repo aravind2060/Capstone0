@@ -11,10 +11,6 @@ public class D_Address {
     public String Phone;
     public String AddressType;
     public String error=null;
-    /*
-      @AddressType --> 0 is home Address
-                        1 is Office Address
-     */
 
     public D_Address()
     {

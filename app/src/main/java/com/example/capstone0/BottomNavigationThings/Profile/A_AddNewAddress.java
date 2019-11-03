@@ -8,7 +8,6 @@ import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Toast;
 
@@ -19,22 +18,17 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
 
 import com.example.capstone0.D_CurrentUser;
-import com.example.capstone0.Login.D_UserDataToStoreInFirebase;
 import com.example.capstone0.R;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 
-public class A_AddNewAddress extends AppCompatActivity implements View.OnClickListener, OnTaskCompleted, OnCompleteListener<Void>, RadioGroup.OnCheckedChangeListener {
+public class A_AddNewAddress extends AppCompatActivity implements View.OnClickListener, OnTaskCompleted, RadioGroup.OnCheckedChangeListener {
 
     Button save,gps;
     TextInputLayout textInputLayout1_pincode,textInputLayout2_houseNo,textInputLayout3_road,textInputLayout4_city,textInputLayout5_state,textInputLayout6_name,textInputLayout7_phone;
@@ -45,6 +39,7 @@ public class A_AddNewAddress extends AppCompatActivity implements View.OnClickLi
     int noofaddress= D_CurrentUser.getNoOfAddress();
     RadioGroup radioGroup;
     String AddressType;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -124,7 +119,13 @@ public class A_AddNewAddress extends AppCompatActivity implements View.OnClickLi
         });
 
        FirebaseDatabase.getInstance().getReference("Users").child(FirebaseAuth.getInstance().getCurrentUser().getUid())
-               .child("noOfAddress").setValue(count_noof_address).addOnCompleteListener(this);
+               .child("noOfAddress").setValue(count_noof_address).addOnCompleteListener(new OnCompleteListener<Void>() {
+           @Override
+           public void onComplete(@NonNull Task<Void> task) {
+               if (task.isSuccessful())
+                   D_CurrentUser.noOfAddress=noofaddress+1;
+           }
+       });
 
     }
 
@@ -143,7 +144,7 @@ public class A_AddNewAddress extends AppCompatActivity implements View.OnClickLi
                         @Override
                         public void onSuccess(Location location) {
                             if (location!=null)
-                           new ASyncTaskToFetchFromInternet(A_AddNewAddress.this,A_AddNewAddress.this).execute(location);
+                           new ASyncTaskToFetchAddressUsingGps(A_AddNewAddress.this,A_AddNewAddress.this).execute(location);
                            else
                                Toast.makeText(getApplicationContext(),"Some thing went wrong ",Toast.LENGTH_LONG).show();
                         }
@@ -310,12 +311,6 @@ public class A_AddNewAddress extends AppCompatActivity implements View.OnClickLi
           d_address.AddressType=AddressType;
           return true;
       }
-    }
-
-    @Override
-    public void onComplete(@NonNull Task<Void> task) {
-        if (task.isSuccessful())
-            D_CurrentUser.noOfAddress=noofaddress+1;
     }
 
     @Override

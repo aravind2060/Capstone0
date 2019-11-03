@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".BottomNavigationThings.Profile.A_MyOrders">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/Toolbar_MyOrders"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            app:title="@string/Profile_MyOrders"
+            app:titleTextColor="@color/White"
+            android:background="@color/DodgerBlue"
+            app:navigationIcon="@drawable/back_navigation"
+            />
+        <TextView
+            android:id="@+id/NumberOfPastOrders"
+            android:layout_below="@id/Toolbar_MyOrders"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Number Of Past Orders:"
+            android:layout_marginTop="15dp"
+            android:layout_marginBottom="10dp"
+            />
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/card1_MyOrders"
+            android:layout_below="@id/NumberOfPastOrders"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:cardUseCompatPadding="true"
+            >
+            <ListView
+                android:id="@+id/MyOrders_ListView"
+                android:layout_below="@id/MyAddress_Fragment_No.of_Address"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                />
+        </com.google.android.material.card.MaterialCardView>
+    </RelativeLayout>
+</androidx.core.widget.NestedScrollView>

@@ -4,13 +4,12 @@ import java.io.File;
 
 public class D_ShoesDataFromInternet {
 
-    File Image;
+
     String ProductTitle;
     String Price;
     String ProductDescription;
 
-    public D_ShoesDataFromInternet(File image, String productTitle, String price,String productDescription) {
-        Image = image;
+    public D_ShoesDataFromInternet( String productTitle, String price,String productDescription) {
         ProductTitle = productTitle;
         Price = price;
         ProductDescription=productDescription;

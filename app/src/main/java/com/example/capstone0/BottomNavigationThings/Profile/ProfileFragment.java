@@ -33,6 +33,9 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
     TextView profileName;
     TextView profilePhoneNumber;
     TextView AccountSettings;
+    TextView Myorders;
+    TextView WishList;
+    TextView MyCart;
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
@@ -43,7 +46,13 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
        setProfilePhoneNumber();
        return view;
     }
-     private void findViewByIds(View view)
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+    }
+
+    private void findViewByIds(View view)
      {
          profileImage =view.findViewById(R.id.Profile_Fragment_ImgBtn_Profile);
         signout=view.findViewById(R.id.Profile_Fragment_ImgView_Logout_Icon);
@@ -52,17 +61,24 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
         profileName=view.findViewById(R.id.Profile_Fragment_TxtView_Profile_Name);
         profilePhoneNumber=view.findViewById(R.id.Profile_Fragment_TxtView_Profile_Phone);
         AccountSettings=view.findViewById(R.id.Profile_Fragment_TxtView_Profile_MySettings);
+        Myorders=view.findViewById(R.id.Profile_Fragment_TxtView_Profile_MyOrders);
+        WishList=view.findViewById(R.id.Profile_Fragment_TxtView_Profile_MyWishList);
+        MyCart=view.findViewById(R.id.Profile_Fragment_TxtView_Profile_MyCart);
 
         AccountSettings.setOnClickListener(this);
         viewalladdress.setOnClickListener(this);
         signout2.setOnClickListener(this);
         signout.setOnClickListener(this);
         profileImage.setOnClickListener(this);
-
+        Myorders.setOnClickListener(this);
+        WishList.setOnClickListener(this);
+        MyCart.setOnClickListener(this);
     }
      private void setProfileImage()
      {
-          if (D_CurrentUser.Gender.contentEquals("Male"))
+         if (D_CurrentUser.Gender==null)
+             profileImage.setImageResource(R.drawable.men_icon);
+         else if (D_CurrentUser.Gender.contentEquals("Male"))
              profileImage.setImageResource(R.drawable.men_icon);
          else
              profileImage.setImageResource(R.drawable.women_icon);
@@ -71,14 +87,18 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
      {
          profileName.setText(D_CurrentUser.getName());
      }
-     private void setProfilePhoneNumber(){profilePhoneNumber.setText(D_CurrentUser.getPhone());}
+     private void setProfilePhoneNumber(){
+        profilePhoneNumber.setText(D_CurrentUser.getPhone());}
 
      @Override
     public void onClick(View v) {
         if (v.getId()==R.id.Profile_Fragment_ImgView_Logout_Icon || v.getId()==R.id.Profile_Fragment_TxtView_Logout_Icon)
         {
             FirebaseAuth.getInstance().signOut();
-            startActivity(new Intent(getContext(), A_SignIn.class));
+            clearCurrentUserData();
+            Intent intent=new Intent(getContext(),A_SignIn.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            startActivity(intent);
         }
         else if (v.getId()==R.id.Profile_Fragment_TxtView_Profile_MyAddresses)
         {
@@ -88,8 +108,26 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
         {
             startActivity(new Intent(getContext(),A_AccountSettings.class));
         }
+        else if (v.getId()==R.id.Profile_Fragment_TxtView_Profile_MyOrders)
+        {
+            startActivity(new Intent(getContext(),A_MyOrders.class));
+        }
+        else if (v.getId()==R.id.Profile_Fragment_TxtView_Profile_MyWishList)
+        {
+            startActivity(new Intent(getContext(),A_WishListedProducts.class));
+        }
+        //else if (v.getId()==R.id.Profile_Fragment_TxtView_Profile_MyCart)
+            //startActivity(new Intent(getContext()));
 
     }
-
-
+    private void clearCurrentUserData()
+    {
+        D_CurrentUser.setNoOfPreviousOrders(0);
+        D_CurrentUser.setNoOfAddress(0);
+        D_CurrentUser.setGender(null);
+        D_CurrentUser.setPhone(null);
+        D_CurrentUser.setName(null);
+        D_CurrentUser.setEmail(null);
+        D_CurrentUser.setNoOfProductsInCart(0);
+    }
 }

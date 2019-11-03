@@ -2,7 +2,9 @@
 <RelativeLayout android:layout_height="match_parent"
     android:layout_width="match_parent"
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".BottomNavigationThings.MenShoes.MenFragment">
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/Toolbar_MenFragment"
         android:layout_width="match_parent"
@@ -20,6 +22,12 @@
         app:tabSelectedTextColor="@color/Green"
         app:tabIndicatorColor="@color/DarkGreen"
         />
+
+    <FrameLayout
+        android:id="@+id/RootTag_Frame_Men"
+        android:layout_below="@id/Toolbar_MenFragment"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
     <androidx.viewpager.widget.ViewPager
         android:id="@+id/ViewPagerInMenFragment"
         android:layout_width="match_parent"
