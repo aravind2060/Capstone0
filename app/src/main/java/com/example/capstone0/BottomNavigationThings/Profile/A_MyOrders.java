@@ -18,7 +18,6 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.bumptech.glide.Glide;
 import com.example.capstone0.BottomNavigationThings.MenShoes.D_PreviousOrdersAndPresentInCartOrders;
 import com.example.capstone0.D_CurrentUser;
 import com.example.capstone0.R;
@@ -94,21 +93,21 @@ import java.util.concurrent.ThreadPoolExecutor;
              TextView Quantity = convertView.findViewById(R.id.Quantity_MyOrders);
              TextView Price = convertView.findViewById(R.id.Price_MyOrders);
 
-             productTitle.setText(d_previousOrdersAndPresentInCartOrders.get(position).getProductTitle());
-             priceTitle.setText(d_previousOrdersAndPresentInCartOrders.get(position).getPriceDetails());
-             Quantity.setText(d_previousOrdersAndPresentInCartOrders.get(position).getQuantity());
-             Price.setText(d_previousOrdersAndPresentInCartOrders.get(position).getPriceDetails());
+             productTitle.setText(d_previousOrdersAndPresentInCartOrders.get(position).ProductTitle);
+             priceTitle.setText(d_previousOrdersAndPresentInCartOrders.get(position).PriceDetails);
+             Quantity.setText(d_previousOrdersAndPresentInCartOrders.get(position).Quantity);
+             Price.setText(d_previousOrdersAndPresentInCartOrders.get(position).PriceDetails);
 
-             String Gender = d_previousOrdersAndPresentInCartOrders.get(position).getProductCategoryByGender();
-             String ImageCategory = d_previousOrdersAndPresentInCartOrders.get(position).getProductCategory();
-             String Image = d_previousOrdersAndPresentInCartOrders.get(position).getProductImage();
+             String Gender = d_previousOrdersAndPresentInCartOrders.get(position).ProductCategoryByGender;
+             String ImageCategory = d_previousOrdersAndPresentInCartOrders.get(position).ProductCategory;
+             String Image = d_previousOrdersAndPresentInCartOrders.get(position).ProductImage;
              String Gen;
              if (Gender.equals("Male"))
                  Gen = "MenFootWear";
              else
                  Gen = "WomenFootWear";
              StorageReference storageReference = FirebaseStorage.getInstance().getReference(Gen).child(ImageCategory).child(Image);
-             Glide.with(getContext()).load(storageReference).into(imageButton);
+             //Glide.with(getContext()).load(storageReference).into(imageButton);
              return convertView;
          }
 

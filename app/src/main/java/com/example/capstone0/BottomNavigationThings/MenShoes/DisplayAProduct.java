@@ -1,34 +1,39 @@
 package com.example.capstone0.BottomNavigationThings.MenShoes;
 
 import android.content.Context;
+import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageButton;
+import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.RecyclerView;
 
-import com.bumptech.glide.Glide;
 import com.example.capstone0.R;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
-public class DisplayAProduct extends Fragment {
+public class DisplayAProduct extends Fragment{
 
-    ArrayList<D_ShoesDataFromInternet> arrayList;
+    ArrayList<D_ShoesDataFromInternet> arrayListFormal;
     Context context;
     String ImageCategorye;
+    MyAdapter myAdapter;
      DisplayAProduct(Context context1,ArrayList<D_ShoesDataFromInternet> arrayList1,String imageCategorye)
      {
-        arrayList=arrayList1;
+        arrayListFormal=arrayList1;
         context=context1;
         ImageCategorye=imageCategorye;
      }
@@ -37,59 +42,81 @@ public class DisplayAProduct extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
          View view=LayoutInflater.from(context).inflate(R.layout.fragment_to_display,container,false);
-         RecyclerView recyclerView=view.findViewById(R.id.RecyclerViewToDisplay);
-
-         recyclerView.setAdapter(new MyAdapter(arrayList,ImageCategorye,context));
-
+        setListView(view);
         return view;
     }
 
-
-    class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolderClass>
-    {
-        ArrayList<D_ShoesDataFromInternet> arrayList;
-        Context context;
-        String ImageCategory;
-        private MyAdapter(ArrayList<D_ShoesDataFromInternet> arrayList,String imageCategory,Context context1) {
-            this.ImageCategory=imageCategory;
-            this.arrayList = arrayList;
-            this.context=context1;
-        }
-        @NonNull
-        @Override
-        public ViewHolderClass onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-            return new ViewHolderClass(LayoutInflater.from(context).inflate(R.layout.single_view_for_label_of_shoe,parent,true));
-        }
-
-        @Override
-        public void onBindViewHolder(@NonNull ViewHolderClass holder, int position) {
-            holder.title.setText(arrayList.get(position).ProductTitle);
-            holder.price.setText(arrayList.get(position).Price);
-            holder.productDescription.setText(arrayList.get(position).ProductDescription);
-            Glide.with(context).load(holder.storageReference.child(ImageCategory+(position+1))).into(holder.image);
-
-        }
-
-        @Override
-        public int getItemCount() {
-            return arrayList.size();
-        }
-        private class ViewHolderClass extends RecyclerView.ViewHolder {
-
-            ImageButton image;
-            TextView price,title,productDescription;
-            StorageReference storageReference;
-            public ViewHolderClass(@NonNull View itemView)
-            {
-                super(itemView);
-                image=itemView.findViewById(R.id.SingleViewForLabelOfShoe_ImageView);
-                price=itemView.findViewById(R.id.SingleViewForLabelOfShoe_Price);
-                title=itemView.findViewById(R.id.SingleViewForLabelOfShoe_Name);
-                productDescription=itemView.findViewById(R.id.ProductDescription);
-                storageReference= FirebaseStorage.getInstance().getReference("MenFootWear").child(ImageCategory);
-            }
-        }
+    private void setListView(View view) {
+        ListView listView=view.findViewById(R.id.ListViewToDisplayProducts);
+        myAdapter=new MyAdapter(context,R.layout.single_view_for_label_of_shoe,arrayListFormal,ImageCategorye);
+        listView.setAdapter(myAdapter);
+        myAdapter.notifyDataSetChanged();
     }
+
+
+
+
+    class MyAdapter extends ArrayAdapter<D_ShoesDataFromInternet>
+   {
+       ArrayList<D_ShoesDataFromInternet> d_shoesDataFromInternets;
+       Context context1;
+       String ImageCategory;
+       StorageReference storageReference;
+       Uri downloadableuri=null;
+       public MyAdapter(@NonNull Context context, int resource, @NonNull ArrayList<D_ShoesDataFromInternet> objects,String ImageCategory) {
+           super(context, resource, objects);
+           d_shoesDataFromInternets=objects;
+           context1=context;
+           this.ImageCategory=ImageCategory;
+           storageReference=FirebaseStorage.getInstance().getReference("MenFootWear").child(ImageCategory);
+       }
+        private class ViewHolder
+        {
+            ImageView imageView;
+            TextView ProductTitle,PriceOfProduct;
+        }
+       @NonNull
+       @Override
+       public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
+            ViewHolder viewHolder;
+           if (convertView==null)
+           {
+               viewHolder=new ViewHolder();
+               convertView=LayoutInflater.from(context1).inflate(R.layout.single_view_for_label_of_shoe,parent,false);
+               viewHolder.imageView=convertView.findViewById(R.id.SingleViewForLabelOfShoe_ImageView);
+               viewHolder.PriceOfProduct=convertView.findViewById(R.id.SingleViewForLabelOfShoe_Price);
+               viewHolder.ProductTitle=convertView.findViewById(R.id.SingleViewForLabelOfShoe_Name);
+               convertView.setTag(viewHolder);
+           }else
+           {
+               viewHolder= (ViewHolder) convertView.getTag();
+           }
+
+           if(position<d_shoesDataFromInternets.size()) {
+               Log.e("DisplayAProduct","DownloadProduct: "+(ImageCategory+(position+1)));
+               storageReference.child(ImageCategory+(position+1)).getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                   @Override
+                   public void onSuccess(Uri uri) {
+                       downloadableuri=uri;
+                       Log.e("DisplayAProduct","DownloadProduct: "+downloadableuri);
+                   }
+               });
+               Picasso.get().load(downloadableuri).into(viewHolder.imageView);
+               viewHolder.ProductTitle.setText(d_shoesDataFromInternets.get(position).ProductTitleOfShoe);
+               viewHolder.PriceOfProduct.setText(d_shoesDataFromInternets.get(position).ProductPriceOfShoe);
+           }
+           return convertView;
+       }
+
+       @Override
+       public int getCount() {
+           Log.e("Display","Size: "+d_shoesDataFromInternets.size());
+           return d_shoesDataFromInternets.size();
+       }
+
+   }
+
+
 
 
 }

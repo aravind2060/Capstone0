@@ -41,7 +41,7 @@ interface TaskCompletedFetchingAddress
 public class A_MyAddresses extends AppCompatActivity implements View.OnClickListener, TaskCompletedFetchingAddress {
 
     ListView listView;
-    ArrayList<D_Address> d_addresseslist;
+    ArrayList<D_Address> d_addresseslist=new ArrayList<>();
     TextView addnewAddress;
     TextView noofaddressessshow;
     int noofaddressindb= D_CurrentUser.getNoOfAddress();
@@ -53,7 +53,6 @@ public class A_MyAddresses extends AppCompatActivity implements View.OnClickList
         setContentView(R.layout.activity_myaddresses);
         findViewByIds();
         getAddressFromFirebase();
-
     }
 
     public void findViewByIds()
@@ -84,12 +83,6 @@ public class A_MyAddresses extends AppCompatActivity implements View.OnClickList
         }
     }
 
-    @Override
-    public void TaskCompletedListenerForFetchingAddress(ArrayList<D_Address> d_addressArrayList) {
-     d_addresseslist=d_addressArrayList;
-        setListView();
-     myAdapter.notifyDataSetChanged();
-    }
 
 
     class MyAdapter extends ArrayAdapter<D_Address> implements View.OnClickListener {
@@ -133,37 +126,47 @@ public class A_MyAddresses extends AppCompatActivity implements View.OnClickList
     }
 
 
+    @Override
+    public void TaskCompletedListenerForFetchingAddress(ArrayList<D_Address> d_addressArrayList) {
+        d_addresseslist=d_addressArrayList;
+        setListView();
+        myAdapter.notifyDataSetChanged();
+    }
 
     public void getAddressFromFirebase()
     {
       new AsyncTaskToFetchAddressFromFireBase(A_MyAddresses.this).execute();
     }
 
-   class AsyncTaskToFetchAddressFromFireBase extends AsyncTask<Integer,Void,ArrayList<D_Address>>
+   class AsyncTaskToFetchAddressFromFireBase extends AsyncTask<Void,Void,ArrayList<D_Address>>
    {
        TaskCompletedFetchingAddress taskCompletedFetchingAddress;
        AsyncTaskToFetchAddressFromFireBase(TaskCompletedFetchingAddress taskCompletedFetchingAddress)
        {
            this.taskCompletedFetchingAddress=taskCompletedFetchingAddress;
        }
-       ArrayList<D_Address> d_addressArrayList;
+       ArrayList<D_Address> d_addressArrayList=new ArrayList<>();
+
        @Override
-       protected ArrayList<D_Address> doInBackground(Integer... integers) {
+       protected ArrayList<D_Address> doInBackground(Void... integers) {
 
              DatabaseReference databaseReference=FirebaseDatabase.getInstance().getReference("Users").child(FirebaseAuth.getInstance().getCurrentUser().getUid());
-              databaseReference.addValueEventListener(new ValueEventListener() {
-                  @Override
-                  public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                      GenericTypeIndicator<ArrayList<D_Address>> genericTypeIndicator=new GenericTypeIndicator<ArrayList<D_Address>>() {};
-                      d_addressArrayList=dataSnapshot.getValue(genericTypeIndicator);
-                      Log.e("A_MyAddress","Address is:"+d_addressArrayList.get(0).AddressType);
-                  }
+              for (int i=1;i<=D_CurrentUser.getNoOfAddress();i++)
+              {
+                  databaseReference.child("Addresses"+i).addValueEventListener(new ValueEventListener() {
+                      @Override
+                      public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                           D_Address d_address=dataSnapshot.getValue(D_Address.class);
+                           if (d_address!=null)
+                               d_addressArrayList.add(d_address);
+                      }
 
-                  @Override
-                  public void onCancelled(@NonNull DatabaseError databaseError) {
+                      @Override
+                      public void onCancelled(@NonNull DatabaseError databaseError) {
 
-                  }
-              });
+                      }
+                  });
+              }
            return d_addressArrayList;
        }
 

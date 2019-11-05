@@ -1,18 +1,20 @@
 package com.example.capstone0.BottomNavigationThings.MenShoes;
 
-import java.io.File;
-
 public class D_ShoesDataFromInternet {
 
 
-    String ProductTitle;
-    String Price;
-    String ProductDescription;
+   public String ProductTitleOfShoe;
+   public String ProductPriceOfShoe;
+   public String ProductDescriptionOfShoe;
 
-    public D_ShoesDataFromInternet( String productTitle, String price,String productDescription) {
-        ProductTitle = productTitle;
-        Price = price;
-        ProductDescription=productDescription;
+    public D_ShoesDataFromInternet(String productTitleOfShoe, String productPriceOfShoe, String productDescriptionOfShoe) {
+        ProductTitleOfShoe = productTitleOfShoe;
+        ProductPriceOfShoe = productPriceOfShoe;
+        ProductDescriptionOfShoe = productDescriptionOfShoe;
     }
+  public D_ShoesDataFromInternet()
+  {
+
+  }
 
 }

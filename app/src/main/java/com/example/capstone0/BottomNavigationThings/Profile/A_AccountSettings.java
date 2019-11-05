@@ -10,6 +10,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
+import com.example.capstone0.BottomNavigationThings.MenShoes.D_ShoesDataFromInternet;
 import com.example.capstone0.D_CurrentUser;
 import com.example.capstone0.Login.A_SignIn;
 import com.example.capstone0.R;
@@ -19,6 +20,8 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+
+import java.util.ArrayList;
 
 public class A_AccountSettings extends AppCompatActivity implements View.OnClickListener {
 
@@ -41,28 +44,34 @@ public class A_AccountSettings extends AppCompatActivity implements View.OnClick
     public void onClick(View v) {
         if (v.getId()==R.id.Account_Settings_btn_Delete_Account)
         {
-           final String uid=firebaseUser.getUid();
+            String uid=firebaseUser.getUid();
+            clearAll();
            deleteuserData(uid);
-           clearAll();
-
            firebaseUser.delete().addOnCompleteListener(new OnCompleteListener<Void>() {
                @Override
                public void onComplete(@NonNull Task<Void> task) {
                    if (task.isSuccessful()) {
                        Toast.makeText(getApplicationContext(), "Account deleted successfully", Toast.LENGTH_LONG).show();
-                        startActivity(new Intent(getApplicationContext(),A_SignIn.class));
+                       removeCurrentUser();
+                       Intent intent=new Intent(getApplicationContext(),A_SignIn.class);
+                       intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                       startActivity(intent);
                    }
                }
            });
         }
+
     }
   public void clearAll()
   {
-      D_CurrentUser.Gender=null;
-      D_CurrentUser.noOfAddress=0;
-      D_CurrentUser.Email=null;
-      D_CurrentUser.Phone=null;
-      D_CurrentUser.Name=null;
+      D_CurrentUser.setName("");
+      D_CurrentUser.setEmail("");
+      D_CurrentUser.setPhone("");
+      D_CurrentUser.setGender("");
+      D_CurrentUser.setNoOfProductsInCart(0);
+      D_CurrentUser.setNoOfPreviousOrders(0);
+      D_CurrentUser.setNoOfWishListedProducts(0);
+      D_CurrentUser.setNoOfAddress(0);
   }
 
   public void deleteuserData(String uid)

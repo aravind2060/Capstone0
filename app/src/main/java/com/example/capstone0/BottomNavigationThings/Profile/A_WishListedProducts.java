@@ -19,7 +19,6 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.bumptech.glide.Glide;
 import com.example.capstone0.BottomNavigationThings.MenShoes.CompleteViewOfProduct;
 import com.example.capstone0.BottomNavigationThings.MenShoes.D_PreviousOrdersAndPresentInCartOrders;
 import com.example.capstone0.D_CurrentUser;
@@ -88,30 +87,30 @@ public class A_WishListedProducts extends AppCompatActivity {
             ImageButton imageButton=convertView.findViewById(R.id.SingleViewForLabelOfShoe_ImageView);
             TextView Name=convertView.findViewById(R.id.SingleViewForLabelOfShoe_Name);
             TextView price=convertView.findViewById(R.id.SingleViewForLabelOfShoe_Price);
-            Name.setText(d_previousOrdersAndPresentInCartOrders.get(position).getProductTitle());
-            price.setText(d_previousOrdersAndPresentInCartOrders.get(position).getPriceDetails());
+            Name.setText(d_previousOrdersAndPresentInCartOrders.get(position).ProductTitle);
+            price.setText(d_previousOrdersAndPresentInCartOrders.get(position).PriceDetails);
 
-            String Gender = d_previousOrdersAndPresentInCartOrders.get(position).getProductCategoryByGender();
-            String ImageCategory = d_previousOrdersAndPresentInCartOrders.get(position).getProductCategory();
-            String Image = d_previousOrdersAndPresentInCartOrders.get(position).getProductImage();
+            String Gender = d_previousOrdersAndPresentInCartOrders.get(position).ProductCategoryByGender;
+            String ImageCategory = d_previousOrdersAndPresentInCartOrders.get(position).ProductCategory;
+            String Image = d_previousOrdersAndPresentInCartOrders.get(position).ProductImage;
             String Gen;
             if (Gender.equals("Male"))
                 Gen = "MenFootWear";
             else
                 Gen = "WomenFootWear";
             StorageReference storageReference = FirebaseStorage.getInstance().getReference(Gen).child(ImageCategory).child(Image);
-            Glide.with(getContext()).load(storageReference).into(imageButton);
+            //Glide.with(getContext()).load(storageReference).into(imageButton);
 
             imageButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     Intent gotoCompleteProduct=new Intent(getContext(), CompleteViewOfProduct.class);
-                    gotoCompleteProduct.putExtra("Title",d_previousOrdersAndPresentInCartOrders.get(position).getProductTitle());
-                    gotoCompleteProduct.putExtra("ProductDescription",d_previousOrdersAndPresentInCartOrders.get(position).getProductDescription());
-                    gotoCompleteProduct.putExtra("Price",d_previousOrdersAndPresentInCartOrders.get(position).getPriceDetails());
-                    gotoCompleteProduct.putExtra("Image",d_previousOrdersAndPresentInCartOrders.get(position).getProductImage());
-                    gotoCompleteProduct.putExtra("ImageCategory",d_previousOrdersAndPresentInCartOrders.get(position).getProductCategory());
-                    gotoCompleteProduct.putExtra("GenderCategory",d_previousOrdersAndPresentInCartOrders.get(position).getProductCategoryByGender());
+                    gotoCompleteProduct.putExtra("Title",d_previousOrdersAndPresentInCartOrders.get(position).ProductTitle);
+                    gotoCompleteProduct.putExtra("ProductDescription",d_previousOrdersAndPresentInCartOrders.get(position).ProductDescription);
+                    gotoCompleteProduct.putExtra("Price",d_previousOrdersAndPresentInCartOrders.get(position).PriceDetails);
+                    gotoCompleteProduct.putExtra("Image",d_previousOrdersAndPresentInCartOrders.get(position).ProductImage);
+                    gotoCompleteProduct.putExtra("ImageCategory",d_previousOrdersAndPresentInCartOrders.get(position).ProductCategory);
+                    gotoCompleteProduct.putExtra("GenderCategory",d_previousOrdersAndPresentInCartOrders.get(position).ProductCategoryByGender);
                     startActivity(gotoCompleteProduct);
                 }
             });
@@ -119,12 +118,12 @@ public class A_WishListedProducts extends AppCompatActivity {
                 @Override
                 public void onClick(View v) {
                     Intent gotoCompleteProduct=new Intent(getContext(), CompleteViewOfProduct.class);
-                    gotoCompleteProduct.putExtra("Title",d_previousOrdersAndPresentInCartOrders.get(position).getProductTitle());
-                    gotoCompleteProduct.putExtra("ProductDescription",d_previousOrdersAndPresentInCartOrders.get(position).getProductDescription());
-                    gotoCompleteProduct.putExtra("Price",d_previousOrdersAndPresentInCartOrders.get(position).getPriceDetails());
-                    gotoCompleteProduct.putExtra("Image",d_previousOrdersAndPresentInCartOrders.get(position).getProductImage());
-                    gotoCompleteProduct.putExtra("ImageCategory",d_previousOrdersAndPresentInCartOrders.get(position).getProductCategory());
-                    gotoCompleteProduct.putExtra("GenderCategory",d_previousOrdersAndPresentInCartOrders.get(position).getProductCategoryByGender());
+                    gotoCompleteProduct.putExtra("Title",d_previousOrdersAndPresentInCartOrders.get(position).ProductTitle);
+                    gotoCompleteProduct.putExtra("ProductDescription",d_previousOrdersAndPresentInCartOrders.get(position).ProductDescription);
+                    gotoCompleteProduct.putExtra("Price",d_previousOrdersAndPresentInCartOrders.get(position).PriceDetails);
+                    gotoCompleteProduct.putExtra("Image",d_previousOrdersAndPresentInCartOrders.get(position).ProductImage);
+                    gotoCompleteProduct.putExtra("ImageCategory",d_previousOrdersAndPresentInCartOrders.get(position).ProductCategory);
+                    gotoCompleteProduct.putExtra("GenderCategory",d_previousOrdersAndPresentInCartOrders.get(position).ProductCategoryByGender);
                     startActivity(gotoCompleteProduct);
                 }
             });

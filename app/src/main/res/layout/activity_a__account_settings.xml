@@ -17,6 +17,5 @@
          android:text="Delete Account"
          android:layout_centerHorizontal="true"
          />
-
    </RelativeLayout>
 </androidx.core.widget.NestedScrollView>

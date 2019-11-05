@@ -5,16 +5,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     tools:context=".BottomNavigationThings.MenShoes.MenFragment">
-    <androidx.appcompat.widget.Toolbar
-        android:id="@+id/Toolbar_MenFragment"
-        android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        app:title="Men's FootWear"
-        android:background="@color/DodgerBlue"
-        app:titleTextColor="@color/White"
-        />
+
     <com.google.android.material.tabs.TabLayout
-        android:layout_below="@id/Toolbar_MenFragment"
         android:id="@+id/TabLayoutInMenFragment"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -22,12 +14,6 @@
         app:tabSelectedTextColor="@color/Green"
         app:tabIndicatorColor="@color/DarkGreen"
         />
-
-    <FrameLayout
-        android:id="@+id/RootTag_Frame_Men"
-        android:layout_below="@id/Toolbar_MenFragment"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
     <androidx.viewpager.widget.ViewPager
         android:id="@+id/ViewPagerInMenFragment"
         android:layout_width="match_parent"

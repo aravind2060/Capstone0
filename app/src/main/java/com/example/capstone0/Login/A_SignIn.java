@@ -54,8 +54,6 @@ public class A_SignIn extends AppCompatActivity implements View.OnClickListener 
     TextInputEditText Email,Password;
     TextInputLayout Email1,Password1;
     SignInButton GoogleSignInBtn;
-      DatabaseReference databaseReference;
-      boolean flag=false;
     private static final Pattern PASSWORD_PATTERN =
             Pattern.compile("^" +
                     //"(?=.*[0-9])" +         //at least 1 digit
@@ -282,7 +280,7 @@ public class A_SignIn extends AppCompatActivity implements View.OnClickListener 
                {
                   if (firebaseAuth.getCurrentUser().isEmailVerified())
                   {
-                      new ASyncTaskToFetchcurrentUserData().execute();
+                      new ASyncTaskToFetchCurrentUserData().execute();
                       Toast.makeText(getApplicationContext(),"Login Success",Toast.LENGTH_LONG).show();
                       startActivity(new Intent(getApplicationContext(),MainActivity.class));
                   }
@@ -397,15 +395,14 @@ public class A_SignIn extends AppCompatActivity implements View.OnClickListener 
 
   private void loadDataOfCurrentUserDataUsingAsyncTaskClass()
   {
-      new ASyncTaskToFetchcurrentUserData().execute();
+      new ASyncTaskToFetchCurrentUserData().execute();
   }
 
 
-    class ASyncTaskToFetchcurrentUserData extends AsyncTask<Void,Void,Boolean> {
+  class ASyncTaskToFetchCurrentUserData extends AsyncTask<Void,Void,Void> {
 
-        boolean isSuccess=true;
         @Override
-        protected Boolean doInBackground(Void... voids) {
+        protected Void doInBackground(Void... voids) {
 
             DatabaseReference databaseReference= FirebaseDatabase.getInstance().getReference("Users").child(FirebaseAuth.getInstance().getCurrentUser().getUid());
             databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -416,13 +413,12 @@ public class A_SignIn extends AppCompatActivity implements View.OnClickListener 
                         D_UserDataToStoreInFirebase d_currentUser=dataSnapshot.getValue(D_UserDataToStoreInFirebase.class);
                         if (d_currentUser!=null) {
                             setData(d_currentUser);
-                            isSuccess=true;
                             Log.e("Astask",d_currentUser.Email);
+                            setDataIntoSharedPreference();
                         }
                         else
                         {
                             Log.e("ASTaskCurrentUserData","Unable to get current user data");
-                            isSuccess=false;
                         }
                     }
                 }
@@ -432,8 +428,7 @@ public class A_SignIn extends AppCompatActivity implements View.OnClickListener 
 
                 }
             });
-
-            return isSuccess;
+            return null;
         }
 
         private void setData(D_UserDataToStoreInFirebase d_currentUser) {
@@ -489,15 +484,6 @@ public class A_SignIn extends AppCompatActivity implements View.OnClickListener 
             D_CurrentUser.setNoOfWishListedProducts(noOfWishListedProducts);
         }
 
-        @Override
-        protected void onPostExecute(Boolean aBoolean) {
-            Toast.makeText(A_SignIn.this, ""+aBoolean, Toast.LENGTH_SHORT).show();
-            if (aBoolean)
-            {
-             setDataIntoSharedPreference();
-            }
-            super.onPostExecute(aBoolean);
-        }
     }
 
 }

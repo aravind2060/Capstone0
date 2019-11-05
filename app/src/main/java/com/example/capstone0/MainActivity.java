@@ -16,9 +16,9 @@ public class MainActivity extends AppCompatActivity{
     public static final String FIRST_FRAGMENT_MEN="FIRST_FRAGMENT_MEN";
     public static final String SECOND_FRAGMENT_WOMEN="SECOND_FRAGMENT_WOMEN";
     public static final String FOURTH_FRAGMENT_PROFILE="FOURTH_FRAGMENT_PROFILE";
-    Fragment MenFragmentInstance=MenFragment.newInstance();
-    Fragment WomenFragmentInstance=WomenFragment.newInstance();
-    Fragment ProfileFragmentInstance=ProfileFragment.newInstance();
+    MenFragment MenFragmentInstance=new MenFragment();
+    WomenFragment WomenFragmentInstance=new WomenFragment();
+    ProfileFragment ProfileFragmentInstance=ProfileFragment.newInstance();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -54,4 +54,6 @@ public class MainActivity extends AppCompatActivity{
     {
         getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,fragment,tag).commit();
     }
+
+
 }

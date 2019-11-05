@@ -6,9 +6,17 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="com.example.capstone0.MainActivity">
-
+         <androidx.appcompat.widget.Toolbar
+             android:id="@+id/Toolbar_ActivityMain"
+             android:layout_width="match_parent"
+             android:layout_height="?attr/actionBarSize"
+             android:background="@color/DodgerBlue"
+             app:title="First Step"
+             app:titleTextColor="@color/White"
+         />
         <FrameLayout
             android:id="@+id/fragment_container"
+            android:layout_below="@id/Toolbar_ActivityMain"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_above="@+id/navigation"

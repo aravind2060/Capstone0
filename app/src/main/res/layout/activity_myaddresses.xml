@@ -1,14 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".BottomNavigationThings.Profile.A_MyAddresses">
 
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
+
 
         <androidx.appcompat.widget.Toolbar
         android:id="@+id/Toolbar_MyAddress_Fragment"
@@ -47,19 +45,10 @@
             android:layout_marginTop="15dp"
             android:layout_marginBottom="10dp"
             />
-        <com.google.android.material.card.MaterialCardView
-            android:id="@+id/card2_MyAddress"
-            android:layout_below="@id/MyAddress_Fragment_No.of_Address"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:cardUseCompatPadding="true"
-            >
-
             <ListView
                 android:id="@+id/MyAddress_Fragment_ListView"
-                android:layout_width="470dp"
-                android:layout_height="272dp"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
                 android:layout_below="@id/MyAddress_Fragment_No.of_Address" />
-        </com.google.android.material.card.MaterialCardView>
-    </RelativeLayout>
-</androidx.core.widget.NestedScrollView>
+
+</RelativeLayout>

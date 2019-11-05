@@ -1,6 +1,7 @@
 package com.example.capstone0.BottomNavigationThings.MenShoes;
 
 import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentPagerAdapter;
 import androidx.fragment.app.FragmentStatePagerAdapter;
 
 import android.os.AsyncTask;
@@ -29,10 +30,12 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 
 
+
 /*
   This Fragment holds ScrollTabs of MenFootWear
  */
-public class MenFragment extends Fragment {
+
+public class MenFragment extends Fragment{
 
 
 
@@ -40,7 +43,12 @@ public class MenFragment extends Fragment {
         return new MenFragment();
     }
 
-    ArrayList<D_ShoesDataFromInternet> arrayList;
+    ArrayList<D_ShoesDataFromInternet> dShoesDataFromInternetsFormal =new ArrayList<>();
+    ArrayList<D_ShoesDataFromInternet> dShoesDataFromInternetsCasual=new ArrayList<>();
+    ArrayList<D_ShoesDataFromInternet>dShoesDataFromInternetsSports=new ArrayList<>();
+    ArrayList<D_ShoesDataFromInternet>dShoesDataFromInternetsSneakers=new ArrayList<>();
+    ArrayList<D_ShoesDataFromInternet>dShoesDataFromInternetsSmart=new ArrayList<>();
+    ArrayList<D_ShoesDataFromInternet>dShoesDataFromInternetsEthnic=new ArrayList<>();
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
@@ -62,7 +70,10 @@ public class MenFragment extends Fragment {
         super.onActivityCreated(savedInstanceState);
     }
 
-    private class MyAdapterForMenFragment extends FragmentStatePagerAdapter {
+
+
+
+    private class MyAdapterForMenFragment extends FragmentPagerAdapter {
 
         public MyAdapterForMenFragment(@NonNull FragmentManager fm) {
             super(fm);
@@ -75,28 +86,29 @@ public class MenFragment extends Fragment {
             switch (position)
             {
                 case 0:
-                    new AsyncTaskToFetchProductData().execute("Formal");
-                    displayAProduct=new DisplayAProduct(getContext(),arrayList,"Formal");
+                    new AsyncTaskToFetchProductDetails().execute("Formal");
+                    displayAProduct=new DisplayAProduct(getContext(), dShoesDataFromInternetsFormal,"Formal");
                     break;
                 case 1:
-                    new AsyncTaskToFetchProductData().execute("Sneakers");
-                    displayAProduct=new DisplayAProduct(getContext(),arrayList,"Sneakers");
+                    new AsyncTaskToFetchProductDetails().execute("Sneakers");
+
+                    displayAProduct=new DisplayAProduct(getContext(), dShoesDataFromInternetsSneakers,"Sneakers");
                     break;
                 case 2:
-                    new AsyncTaskToFetchProductData().execute("Sports");
-                    displayAProduct=new DisplayAProduct(getContext(),arrayList,"Sports");
+                    new AsyncTaskToFetchProductDetails().execute("Sports");
+                    displayAProduct=new DisplayAProduct(getContext(), dShoesDataFromInternetsSports,"Sports");
                     break;
                 case 3:
-                    new AsyncTaskToFetchProductData().execute("Smart");
-                    displayAProduct=new DisplayAProduct(getContext(),arrayList,"Smart");
+                    new AsyncTaskToFetchProductDetails().execute("Smart");
+                    displayAProduct=new DisplayAProduct(getContext(), dShoesDataFromInternetsSmart,"Smart");
                     break;
                 case 4:
-                    new AsyncTaskToFetchProductData().execute("Ethnic");
-                    displayAProduct=new DisplayAProduct(getContext(),arrayList,"Ethnic");
+                    new AsyncTaskToFetchProductDetails().execute("Ethnic");
+                    displayAProduct=new DisplayAProduct(getContext(), dShoesDataFromInternetsEthnic,"Ethnic");
                     break;
                 case 5:
-                    new AsyncTaskToFetchProductData().execute("Casual");
-                    displayAProduct=new DisplayAProduct(getContext(),arrayList,"Casual");
+                    new AsyncTaskToFetchProductDetails().execute("Casual");
+                    displayAProduct=new DisplayAProduct(getContext(), dShoesDataFromInternetsCasual,"Casual");
                     break;
 
             }
@@ -137,60 +149,157 @@ public class MenFragment extends Fragment {
     }
 
 
-
-    class AsyncTaskToFetchProductData extends AsyncTask<String,Void, ArrayList<D_ShoesDataFromInternet>> implements ValueEventListener {
-
-         ArrayList<D_ShoesDataFromInternet>arrayList2=new ArrayList<>();
+    class AsyncTaskToFetchProductDetails extends AsyncTask<String,Void,Void>
+    {
         @Override
-        protected ArrayList<D_ShoesDataFromInternet> doInBackground(String... strings) {
-            final int[] noOfProducts = new int[1];
-            String Category=strings[0];
-            DatabaseReference databaseReferenceForNoOfProducts=FirebaseDatabase.getInstance().getReference("MenFootWear").child(Category);
-            databaseReferenceForNoOfProducts.child("Size").addListenerForSingleValueEvent(new ValueEventListener() {
-                @Override
-                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                    if (dataSnapshot.exists()) {
-                        noOfProducts[0] = dataSnapshot.getValue(Integer.class);
+        protected Void doInBackground(String...strings) {
+            String ImageCategory=strings[0];
+            DatabaseReference databaseReference=FirebaseDatabase.getInstance().getReference("MenFootWear").child(ImageCategory);
+            if (ImageCategory.contentEquals("Formal"))
+            {
+                databaseReference.addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        for (DataSnapshot dataSnapshot1:dataSnapshot.getChildren()) {
+                            D_ShoesDataFromInternet dShoesDataFromInternet = dataSnapshot1.getValue(D_ShoesDataFromInternet.class);
+                            if (dShoesDataFromInternet != null) {
+                                dShoesDataFromInternetsFormal.add(dShoesDataFromInternet);
+                               Log.e("MenFragment","Going inside");
+                            }
+                            else
+                            {
+                                Log.e("MenFragment","Unable To go inside");
+                            }
+                        }
                     }
-                }
-                @Override
-                public void onCancelled(@NonNull DatabaseError databaseError) {
 
-                }
-            });
-            if(noOfProducts[0] ==0)
-                return null;
-            for (int i = 1; i<= noOfProducts[0]; i++)
-            {
-                databaseReferenceForNoOfProducts.child(Category+i).addValueEventListener(this);
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
             }
-            return arrayList2;
-        }
-
-
-        @Override
-        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-            if (dataSnapshot.exists())
+            else if (ImageCategory.contentEquals("Casual"))
             {
-                D_ShoesDataFromInternet d_shoesDataFromInternet=dataSnapshot.getValue(D_ShoesDataFromInternet.class);
-                if (d_shoesDataFromInternet!=null)
-                    arrayList2.add(d_shoesDataFromInternet);
+                databaseReference.addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        for (DataSnapshot dataSnapshot1:dataSnapshot.getChildren()) {
+                            D_ShoesDataFromInternet dShoesDataFromInternet = dataSnapshot1.getValue(D_ShoesDataFromInternet.class);
+                            if (dShoesDataFromInternet != null) {
+                                dShoesDataFromInternetsCasual.add(dShoesDataFromInternet);
+                                Log.e("MenFragment","Going inside");
+                            }
+                            else
+                            {
+                                Log.e("MenFragment","Unable To go inside");
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
             }
+            else if (ImageCategory.contentEquals("Sports"))
+            {
+                databaseReference.addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        for (DataSnapshot dataSnapshot1:dataSnapshot.getChildren()) {
+                            D_ShoesDataFromInternet dShoesDataFromInternet = dataSnapshot1.getValue(D_ShoesDataFromInternet.class);
+                            if (dShoesDataFromInternet != null) {
+                                dShoesDataFromInternetsSports.add(dShoesDataFromInternet);
+                                Log.e("MenFragment","Going inside");
+                            }
+                            else
+                            {
+                                Log.e("MenFragment","Unable To go inside");
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
+            }
+            else if (ImageCategory.contentEquals("Sneakers"))
+            {
+                databaseReference.addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        for (DataSnapshot dataSnapshot1:dataSnapshot.getChildren()) {
+                            D_ShoesDataFromInternet dShoesDataFromInternet = dataSnapshot1.getValue(D_ShoesDataFromInternet.class);
+                            if (dShoesDataFromInternet != null) {
+                                dShoesDataFromInternetsSneakers.add(dShoesDataFromInternet);
+                                Log.e("MenFragment","Going inside");
+                            }
+                            else
+                            {
+                                Log.e("MenFragment","Unable To go inside");
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
+            }
+            else if (ImageCategory.contentEquals("Smart"))
+            {
+                databaseReference.addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        for (DataSnapshot dataSnapshot1:dataSnapshot.getChildren()) {
+                            D_ShoesDataFromInternet dShoesDataFromInternet = dataSnapshot1.getValue(D_ShoesDataFromInternet.class);
+                            if (dShoesDataFromInternet != null) {
+                                dShoesDataFromInternetsSmart.add(dShoesDataFromInternet);
+                                Log.e("MenFragment","Going inside");
+                            }
+                            else
+                            {
+                                Log.e("MenFragment","Unable To go inside");
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
+            }
+            else if (ImageCategory.contentEquals("Ethnic"))
+            {
+                databaseReference.addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        for (DataSnapshot dataSnapshot1:dataSnapshot.getChildren()) {
+                            D_ShoesDataFromInternet dShoesDataFromInternet = dataSnapshot1.getValue(D_ShoesDataFromInternet.class);
+                            if (dShoesDataFromInternet != null) {
+                                dShoesDataFromInternetsEthnic.add(dShoesDataFromInternet);
+                                Log.e("MenFragment","Going inside");
+                            }
+                            else
+                            {
+                                Log.e("MenFragment","Unable To go inside");
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
+            }
+            return null;
         }
-
-        @Override
-        public void onCancelled(@NonNull DatabaseError databaseError) {
-
-        }
-
-        @Override
-        protected void onPostExecute(ArrayList<D_ShoesDataFromInternet> d_shoesDataFromInternets) {
-            super.onPostExecute(d_shoesDataFromInternets);
-            if (d_shoesDataFromInternets==null)
-                Toast.makeText(getContext(), "No Products", Toast.LENGTH_SHORT).show();
-            else if (d_shoesDataFromInternets.size()>0)
-                arrayList=d_shoesDataFromInternets;
-        }
-
     }
 }

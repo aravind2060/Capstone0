@@ -17,7 +17,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.bumptech.glide.Glide;
 import com.example.capstone0.D_CurrentUser;
 import com.example.capstone0.R;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -82,7 +81,7 @@ public class CompleteViewOfProduct extends AppCompatActivity implements View.OnC
         String ImageCategory=getIntent().getStringExtra("ImageCategory");
         String GenderCategory=getIntent().getStringExtra("GenderCategory");
         StorageReference storageReference= FirebaseStorage.getInstance().getReference(GenderCategory).child(ImageCategory).child(ImageName);
-        Glide.with(getApplicationContext()).load(storageReference).into(ProductImage);
+        //Glide.with(getApplicationContext()).load(storageReference).into(ProductImage);
         D_Image= ImageName;
         D_ImageCategory=ImageCategory;
         D_ProductGender=GenderCategory;
