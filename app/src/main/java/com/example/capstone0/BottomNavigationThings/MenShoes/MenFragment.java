@@ -18,6 +18,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import com.example.capstone0.D_CurrentUser;
 import com.example.capstone0.R;
 import com.google.android.material.tabs.TabLayout;
 import com.google.firebase.auth.FirebaseAuth;
@@ -86,30 +87,36 @@ public class MenFragment extends Fragment{
             switch (position)
             {
                 case 0:
-                    new AsyncTaskToFetchProductDetails().execute("Formal");
-                    displayAProduct=new DisplayAProduct(getContext(), dShoesDataFromInternetsFormal,"Formal");
-                    break;
+//                    new AsyncTaskToFetchProductDetails().execute("Formal");
+//                    displayAProduct=new DisplayAProduct(getContext(), dShoesDataFromInternetsFormal,"Formal");
+//                    break;
+                    return new FormalShoe(getContext());
                 case 1:
-                    new AsyncTaskToFetchProductDetails().execute("Sneakers");
-
-                    displayAProduct=new DisplayAProduct(getContext(), dShoesDataFromInternetsSneakers,"Sneakers");
-                    break;
+//                    new AsyncTaskToFetchProductDetails().execute("Sneakers");
+//
+//                    displayAProduct=new DisplayAProduct(getContext(), dShoesDataFromInternetsSneakers,"Sneakers");
+//                    break;
+                    return new SneakersShoe(getContext());
                 case 2:
-                    new AsyncTaskToFetchProductDetails().execute("Sports");
-                    displayAProduct=new DisplayAProduct(getContext(), dShoesDataFromInternetsSports,"Sports");
-                    break;
+//                    new AsyncTaskToFetchProductDetails().execute("Sports");
+//                    displayAProduct=new DisplayAProduct(getContext(), dShoesDataFromInternetsSports,"Sports");
+//                    break;
+                    return new SportsShoe(getContext());
                 case 3:
-                    new AsyncTaskToFetchProductDetails().execute("Smart");
-                    displayAProduct=new DisplayAProduct(getContext(), dShoesDataFromInternetsSmart,"Smart");
-                    break;
+//                    new AsyncTaskToFetchProductDetails().execute("Smart");
+//                    displayAProduct=new DisplayAProduct(getContext(), dShoesDataFromInternetsSmart,"Smart");
+//                    break;
+                    return new SmartShoe(getContext());
                 case 4:
-                    new AsyncTaskToFetchProductDetails().execute("Ethnic");
-                    displayAProduct=new DisplayAProduct(getContext(), dShoesDataFromInternetsEthnic,"Ethnic");
-                    break;
+//                    new AsyncTaskToFetchProductDetails().execute("Ethnic");
+//                    displayAProduct=new DisplayAProduct(getContext(), dShoesDataFromInternetsEthnic,"Ethnic");
+//                    break;
+                    return new EthnicShoe(getContext());
                 case 5:
-                    new AsyncTaskToFetchProductDetails().execute("Casual");
-                    displayAProduct=new DisplayAProduct(getContext(), dShoesDataFromInternetsCasual,"Casual");
-                    break;
+//                    new AsyncTaskToFetchProductDetails().execute("Casual");
+//                    displayAProduct=new DisplayAProduct(getContext(), dShoesDataFromInternetsCasual,"Casual");
+//                    break;
+                    return new CasualShoe(getContext());
 
             }
             return displayAProduct;
@@ -149,21 +156,31 @@ public class MenFragment extends Fragment{
     }
 
 
-    class AsyncTaskToFetchProductDetails extends AsyncTask<String,Void,Void>
+    class AsyncTaskToFetchProductDetails extends AsyncTask<String,Void,ArrayList<D_ShoesDataFromInternet>>
     {
+
+
+        ArrayList<D_ShoesDataFromInternet> arrayList=new ArrayList<>();
+
         @Override
-        protected Void doInBackground(String...strings) {
+        protected void onPostExecute(ArrayList<D_ShoesDataFromInternet> arrayList) {
+            super.onPostExecute(arrayList);
+            dShoesDataFromInternetsFormal=arrayList;
+        }
+
+        @Override
+        protected ArrayList<D_ShoesDataFromInternet> doInBackground(String...strings) {
             String ImageCategory=strings[0];
             DatabaseReference databaseReference=FirebaseDatabase.getInstance().getReference("MenFootWear").child(ImageCategory);
             if (ImageCategory.contentEquals("Formal"))
             {
-                databaseReference.addValueEventListener(new ValueEventListener() {
+                databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                         for (DataSnapshot dataSnapshot1:dataSnapshot.getChildren()) {
                             D_ShoesDataFromInternet dShoesDataFromInternet = dataSnapshot1.getValue(D_ShoesDataFromInternet.class);
                             if (dShoesDataFromInternet != null) {
-                                dShoesDataFromInternetsFormal.add(dShoesDataFromInternet);
+                                arrayList.add(dShoesDataFromInternet);
                                Log.e("MenFragment","Going inside");
                             }
                             else
@@ -181,7 +198,7 @@ public class MenFragment extends Fragment{
             }
             else if (ImageCategory.contentEquals("Casual"))
             {
-                databaseReference.addValueEventListener(new ValueEventListener() {
+                databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                         for (DataSnapshot dataSnapshot1:dataSnapshot.getChildren()) {
@@ -205,7 +222,7 @@ public class MenFragment extends Fragment{
             }
             else if (ImageCategory.contentEquals("Sports"))
             {
-                databaseReference.addValueEventListener(new ValueEventListener() {
+                databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                         for (DataSnapshot dataSnapshot1:dataSnapshot.getChildren()) {
@@ -229,7 +246,7 @@ public class MenFragment extends Fragment{
             }
             else if (ImageCategory.contentEquals("Sneakers"))
             {
-                databaseReference.addValueEventListener(new ValueEventListener() {
+                databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                         for (DataSnapshot dataSnapshot1:dataSnapshot.getChildren()) {
@@ -253,7 +270,7 @@ public class MenFragment extends Fragment{
             }
             else if (ImageCategory.contentEquals("Smart"))
             {
-                databaseReference.addValueEventListener(new ValueEventListener() {
+                databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                         for (DataSnapshot dataSnapshot1:dataSnapshot.getChildren()) {
@@ -277,7 +294,7 @@ public class MenFragment extends Fragment{
             }
             else if (ImageCategory.contentEquals("Ethnic"))
             {
-                databaseReference.addValueEventListener(new ValueEventListener() {
+                databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                         for (DataSnapshot dataSnapshot1:dataSnapshot.getChildren()) {
@@ -302,4 +319,6 @@ public class MenFragment extends Fragment{
             return null;
         }
     }
+
+
 }

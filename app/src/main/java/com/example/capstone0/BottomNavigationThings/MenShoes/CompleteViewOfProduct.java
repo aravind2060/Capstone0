@@ -47,7 +47,7 @@ public class CompleteViewOfProduct extends AppCompatActivity implements View.OnC
     }
     private void findViewByIds()
     {
-        ProductImage=findViewById(R.id.ImageOfProduct);
+        ProductImage=findViewById(R.id.ImageOfProduct_Custom);
         Price=findViewById(R.id.Price);
         ProductTitle=findViewById(R.id.NameOfProduct);
         ProductDescription=findViewById(R.id.ProductDescription);

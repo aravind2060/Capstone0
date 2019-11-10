@@ -5,6 +5,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import android.os.Bundle;
 import android.view.MenuItem;
+
+import com.example.capstone0.BottomNavigationThings.CustomShoes.CustomDesignShoe;
 import com.example.capstone0.BottomNavigationThings.MenShoes.MenFragment;
 import com.example.capstone0.BottomNavigationThings.Profile.ProfileFragment;
 import com.example.capstone0.BottomNavigationThings.WomenShoes.WomenFragment;
@@ -12,6 +14,7 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 public class MainActivity extends AppCompatActivity{
 
+    private static final String THIRD_FRAGMENT_CUSTOM_SHOE ="THIRD_FRAGMENT_CUSTOM_DESIGN_SHOE" ;
     BottomNavigationView bottomNavigationView;
     public static final String FIRST_FRAGMENT_MEN="FIRST_FRAGMENT_MEN";
     public static final String SECOND_FRAGMENT_WOMEN="SECOND_FRAGMENT_WOMEN";
@@ -19,6 +22,7 @@ public class MainActivity extends AppCompatActivity{
     MenFragment MenFragmentInstance=new MenFragment();
     WomenFragment WomenFragmentInstance=new WomenFragment();
     ProfileFragment ProfileFragmentInstance=ProfileFragment.newInstance();
+    CustomDesignShoe customDesignShoe=new CustomDesignShoe();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -39,6 +43,9 @@ public class MainActivity extends AppCompatActivity{
                     return true;
                 case R.id.navigation_women:
                     replaceFragment(WomenFragmentInstance,SECOND_FRAGMENT_WOMEN);
+                    return true;
+                case R.id.navigation_custom:
+                    replaceFragment(customDesignShoe,THIRD_FRAGMENT_CUSTOM_SHOE);
                     return true;
                 case R.id.navigation_profile:
                     replaceFragment(ProfileFragmentInstance,FOURTH_FRAGMENT_PROFILE);

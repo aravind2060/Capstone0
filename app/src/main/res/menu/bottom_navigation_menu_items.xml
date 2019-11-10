@@ -10,7 +10,11 @@
         android:id="@+id/navigation_women"
         android:icon="@drawable/women_icon"
         android:title="@string/women_icon_name" />
-
+    <item
+        android:id="@+id/navigation_custom"
+        android:icon="@drawable/custom_design_shoe"
+        android:title="Custom D"
+        />
     <item
         android:id="@+id/navigation_profile"
         android:icon="@drawable/profile_icon"

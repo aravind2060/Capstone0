@@ -13,6 +13,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 
 import com.example.capstone0.R;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -35,6 +36,7 @@ public class A_SignUp extends AppCompatActivity implements View.OnClickListener 
     Spinner spinner;
     Button SignUp;
     String Gender;
+    Toolbar toolbar;
     private static final Pattern USER_NAME_PATTERN= Pattern.compile("^[a-zA-Z ]{3,20}$",Pattern.CASE_INSENSITIVE);
     private static final Pattern PASSWORD_PATTERN =
             Pattern.compile("^" +
@@ -66,6 +68,13 @@ public class A_SignUp extends AppCompatActivity implements View.OnClickListener 
         Phone=findViewById(R.id.Sign_Up_Txt_EditTxt_Phone);
         Password=findViewById(R.id.Sign_Up_Txt_EditTxt_Password);
         ConfirmPassword=findViewById(R.id.Sign_Up_Txt_EditTxt_Confirm_Password);
+        toolbar=findViewById(R.id.Toolbar_SignUp);
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onBackPressed();
+            }
+        });
 
         spinner=findViewById(R.id.Sign_Up_Spinner_Gender);
         SignUp=findViewById(R.id.Sign_up_Btn_SignUp_7);

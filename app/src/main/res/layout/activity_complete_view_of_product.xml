@@ -15,7 +15,7 @@
         app:navigationIcon="@drawable/back_navigation"
         />
     <ImageView
-        android:id="@+id/ImageOfProduct"
+        android:id="@+id/ImageOfProduct_Custom"
         android:layout_below="@id/Toolbar_complete_view_Of_Product"
         android:layout_width="match_parent"
         android:layout_height="300dp"
@@ -24,11 +24,11 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Add To WishList"
-        android:layout_below="@id/ImageOfProduct"
+        android:layout_below="@id/ImageOfProduct_Custom"
         />
     <ImageView
         android:id="@+id/Bookmark_Image"
-        android:layout_below="@id/ImageOfProduct"
+        android:layout_below="@id/ImageOfProduct_Custom"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"

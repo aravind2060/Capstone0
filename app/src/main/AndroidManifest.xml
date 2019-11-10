@@ -14,7 +14,8 @@
         android:roundIcon="@mipmap/launcher_icon_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".BottomNavigationThings.Profile.A_WishListedProducts"></activity>
+        <activity android:name=".BottomNavigationThings.CustomShoes.CustomDesignBuyNowPage"></activity>
+        <activity android:name=".BottomNavigationThings.Profile.A_WishListedProducts" />
         <activity android:name=".BottomNavigationThings.Profile.A_MyOrders" />
         <activity android:name=".BottomNavigationThings.MenShoes.CompleteViewOfProduct" />
         <activity android:name=".BottomNavigationThings.Profile.A_AccountSettings" />

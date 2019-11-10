@@ -50,9 +50,11 @@ public class DisplayAProduct extends Fragment{
         ListView listView=view.findViewById(R.id.ListViewToDisplayProducts);
         myAdapter=new MyAdapter(context,R.layout.single_view_for_label_of_shoe,arrayListFormal,ImageCategorye);
         listView.setAdapter(myAdapter);
-        myAdapter.notifyDataSetChanged();
     }
-
+   public void setDataModifiedChangeListener()
+   {
+       myAdapter.notifyDataSetChanged();
+   }
 
 
 
@@ -86,14 +88,15 @@ public class DisplayAProduct extends Fragment{
                viewHolder.imageView=convertView.findViewById(R.id.SingleViewForLabelOfShoe_ImageView);
                viewHolder.PriceOfProduct=convertView.findViewById(R.id.SingleViewForLabelOfShoe_Price);
                viewHolder.ProductTitle=convertView.findViewById(R.id.SingleViewForLabelOfShoe_Name);
-               convertView.setTag(viewHolder);
            }else
            {
                viewHolder= (ViewHolder) convertView.getTag();
            }
 
            if(position<d_shoesDataFromInternets.size()) {
-               Log.e("DisplayAProduct","DownloadProduct: "+(ImageCategory+(position+1)));
+               ImageView imageButton = convertView.findViewById(R.id.SingleViewForLabelOfShoe_ImageView);
+               TextView ProductTitle = convertView.findViewById(R.id.SingleViewForLabelOfShoe_Name);
+               TextView PriceOfProduct = convertView.findViewById(R.id.SingleViewForLabelOfShoe_Price);
                storageReference.child(ImageCategory+(position+1)).getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
                    @Override
                    public void onSuccess(Uri uri) {
@@ -101,9 +104,9 @@ public class DisplayAProduct extends Fragment{
                        Log.e("DisplayAProduct","DownloadProduct: "+downloadableuri);
                    }
                });
-               Picasso.get().load(downloadableuri).into(viewHolder.imageView);
-               viewHolder.ProductTitle.setText(d_shoesDataFromInternets.get(position).ProductTitleOfShoe);
-               viewHolder.PriceOfProduct.setText(d_shoesDataFromInternets.get(position).ProductPriceOfShoe);
+               Picasso.get().load(downloadableuri).into(imageButton);
+               ProductTitle.setText(d_shoesDataFromInternets.get(position).ProductTitleOfShoe);
+               PriceOfProduct.setText(d_shoesDataFromInternets.get(position).ProductPriceOfShoe);
            }
            return convertView;
        }
