@@ -21,6 +21,7 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.example.capstone0.R;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
@@ -155,6 +156,7 @@ public class SportsShoe extends Fragment {
 
             holder.Name.setText(arrayList.get(position).ProductTitleOfShoe);
             holder.Price.setText(arrayList.get(position).ProductPriceOfShoe);
+            Glide.with(getContext()).load(arrayList.get(position).ImageLocation).into(holder.ProductImage);
         }
 
 

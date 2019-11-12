@@ -154,8 +154,7 @@ public class FormalShoe extends Fragment {
 
            holder.Name.setText(arrayList.get(position).ProductTitleOfShoe);
            holder.Price.setText(arrayList.get(position).ProductPriceOfShoe);
-            StorageReference storageReference1=storageReference.child(arrayList.get(position).ImageLocation);
-            Glide.with(getContext()).load(storageReference1).into(holder.ProductImage);
+           Glide.with(getContext()).load(arrayList.get(position).ImageLocation).into(holder.ProductImage);
         }
 
 

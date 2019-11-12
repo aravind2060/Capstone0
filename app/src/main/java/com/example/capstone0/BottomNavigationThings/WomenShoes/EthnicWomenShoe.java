@@ -18,6 +18,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.example.capstone0.BottomNavigationThings.MenShoes.D_ShoesDataFromInternet;
 import com.example.capstone0.R;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -104,6 +105,7 @@ public class EthnicWomenShoe extends Fragment {
 
             holder.Name.setText(arrayList.get(position).ProductTitleOfShoe);
             holder.Price.setText(arrayList.get(position).ProductPriceOfShoe);
+            Glide.with(getContext()).load(arrayList.get(position).ImageLocation).into(holder.ProductImage);
         }
 
 

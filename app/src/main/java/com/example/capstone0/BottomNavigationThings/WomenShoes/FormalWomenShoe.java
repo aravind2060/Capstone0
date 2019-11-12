@@ -20,6 +20,7 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.example.capstone0.BottomNavigationThings.MenShoes.D_ShoesDataFromInternet;
 import com.example.capstone0.BottomNavigationThings.MenShoes.FormalShoe;
 import com.example.capstone0.R;
@@ -114,6 +115,7 @@ public class FormalWomenShoe extends Fragment {
 
             holder.Name.setText(arrayList.get(position).ProductTitleOfShoe);
             holder.Price.setText(arrayList.get(position).ProductPriceOfShoe);
+            Glide.with(getContext()).load(arrayList.get(position).ImageLocation).into(holder.ProductImage);
         }
 
 
