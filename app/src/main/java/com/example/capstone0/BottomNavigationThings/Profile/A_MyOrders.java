@@ -123,24 +123,24 @@ import java.util.concurrent.ThreadPoolExecutor;
 
          @Override
          protected ArrayList<D_PreviousOrdersAndPresentInCartOrders> doInBackground(Void... voids) {
-             DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("Users").child(FirebaseAuth.getInstance().getCurrentUser().getUid());
-             int noOfAddress = D_CurrentUser.getNoOfAddress();
-             if (noOfAddress == 0)
-                 return null;
-             for (int i = 1; i <= noOfAddress; i++) {
-                 databaseReference.child("Purchased" + i).addListenerForSingleValueEvent(new ValueEventListener() {
-                     @Override
-                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                         if (dataSnapshot.exists())
-                             d_previousOrdersAndPresentInCartOrders.add(dataSnapshot.getValue(D_PreviousOrdersAndPresentInCartOrders.class));
+             DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("Users").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("MyOrders");
+             databaseReference.addValueEventListener(new ValueEventListener() {
+                 @Override
+                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                     for (DataSnapshot dataSnapshot1:dataSnapshot.getChildren())
+                     {
+                        D_PreviousOrdersAndPresentInCartOrders d_previousOrdersAndPresentInCartOrderss=dataSnapshot1.getValue(D_PreviousOrdersAndPresentInCartOrders.class);
+                        if (d_previousOrdersAndPresentInCartOrderss!=null)
+                            d_previousOrdersAndPresentInCartOrders.add(d_previousOrdersAndPresentInCartOrderss);
                      }
+                 }
 
-                     @Override
-                     public void onCancelled(@NonNull DatabaseError databaseError) {
+                 @Override
+                 public void onCancelled(@NonNull DatabaseError databaseError) {
 
-                     }
-                 });
-             }
+                 }
+             });
+
              return d_previousOrdersAndPresentInCartOrders;
          }
 

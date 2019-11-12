@@ -17,5 +17,37 @@
          android:text="Delete Account"
          android:layout_centerHorizontal="true"
          />
+       <Button
+           android:layout_width="wrap_content"
+           android:layout_height="wrap_content"
+           android:text="Upload data"
+           android:id="@+id/upload"
+           />
+       <EditText
+           android:id="@+id/gendertype"
+           android:layout_width="wrap_content"
+           android:layout_height="wrap_content"
+           android:hint="Type of gender"
+           android:layout_below="@id/upload"
+           />
+       <EditText
+           android:layout_width="wrap_content"
+           android:layout_height="wrap_content"
+           android:hint="Type"
+           android:id="@+id/type"
+           android:layout_below="@id/gendertype"
+           />
+       <ImageView
+           android:id="@+id/imageview"
+           android:layout_below="@id/type"
+           android:layout_width="wrap_content"
+           android:layout_height="wrap_content"
+           />
+       <Button
+           android:layout_width="wrap_content"
+           android:layout_height="wrap_content"
+           android:id="@+id/getimage"
+           android:layout_below="@id/getimage"
+           />
    </RelativeLayout>
 </androidx.core.widget.NestedScrollView>

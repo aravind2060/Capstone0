@@ -6,6 +6,14 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context=".BottomNavigationThings.MenShoes.MenFragment">
 
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/Toolbar_MenFragment"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="@color/DodgerBlue"
+        app:titleTextColor="@color/White"
+        app:title="MenFootWear"
+        />
     <com.google.android.material.tabs.TabLayout
         android:id="@+id/TabLayoutInMenFragment"
         android:layout_width="match_parent"
@@ -13,6 +21,7 @@
         app:tabMode="scrollable"
         app:tabSelectedTextColor="@color/Green"
         app:tabIndicatorColor="@color/DarkGreen"
+        android:layout_below="@id/Toolbar_MenFragment"
         />
     <androidx.viewpager.widget.ViewPager
         android:id="@+id/ViewPagerInMenFragment"

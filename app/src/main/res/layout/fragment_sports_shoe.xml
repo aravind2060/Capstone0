@@ -5,8 +5,8 @@
     android:layout_height="match_parent"
     tools:context=".BottomNavigationThings.MenShoes.SportsShoe">
 
-    <ListView
-        android:id="@+id/ListViewInSportsMen"
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/RecyclerView_Sports_Men"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
 

@@ -45,7 +45,7 @@ public class CustomDesignShoe extends Fragment {
 
     WebView webView;
     Button buynow;
-    Bitmap bitmap;
+  static   Bitmap bitmap;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -104,14 +104,14 @@ public class CustomDesignShoe extends Fragment {
      private void setBuynow(View view)
      {
          buynow=view.findViewById(R.id.BuyNow_custom);
-         final RelativeLayout relativeLayout=view.findViewById(R.id.mainlayout);
+         final WebView webView1=view.findViewById(R.id.WebView_custom);
          buynow.setOnClickListener(new View.OnClickListener() {
              @Override
              public void onClick(View v) {
-                 relativeLayout.setDrawingCacheEnabled(true);
-                 relativeLayout.buildDrawingCache(true);
-                 bitmap= Bitmap.createBitmap(relativeLayout.getDrawingCache());
-                 relativeLayout.setDrawingCacheEnabled(false);
+                 webView1.setDrawingCacheEnabled(true);
+                 webView1.buildDrawingCache(true);
+                 bitmap= Bitmap.createBitmap(webView1.getDrawingCache());
+                 webView1.setDrawingCacheEnabled(false);
                  //uploadImageToFireBase(bitmap);
                  navigateToBuyNowPage(bitmap);
                  Log.e("CustomShoe","Inside onclick Of CustomShoe");
@@ -155,10 +155,7 @@ public class CustomDesignShoe extends Fragment {
      private void navigateToBuyNowPage(Bitmap bitmap1)
      {
          Intent intent=new Intent(getContext(),CustomDesignBuyNowPage.class);
-         //intent.putExtra("BitmapImage",bitmap1);
-         intent.putExtra("CustomProductTitle","FirstStep Shoe");
-         intent.putExtra("CustomDescription","FirstStep Provides best shoe");
-         intent.putExtra("CustomPrice","1200");
+
          startActivity(intent);
      }
 }

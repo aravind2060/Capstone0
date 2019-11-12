@@ -6,7 +6,16 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context=".BottomNavigationThings.WomenShoes.WomenFragment">
 
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/Toolbar_WomenFragment"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="@color/DodgerBlue"
+        app:title="WomenFootWear"
+        app:titleTextColor="@color/White"
+        />
     <com.google.android.material.tabs.TabLayout
+        android:layout_below="@id/Toolbar_WomenFragment"
         android:id="@+id/TabLayoutInWomenFragment"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

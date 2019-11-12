@@ -1,5 +1,6 @@
 package com.example.capstone0.BottomNavigationThings.CustomShoes;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -7,7 +8,9 @@ import androidx.appcompat.widget.Toolbar;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
@@ -17,8 +20,17 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.capstone0.R;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
+
+import java.io.ByteArrayOutputStream;
 
 public class CustomDesignBuyNowPage extends AppCompatActivity implements View.OnClickListener {
 
@@ -28,9 +40,9 @@ public class CustomDesignBuyNowPage extends AppCompatActivity implements View.On
     Button size_7,size_8,size_9,size_10,AddToCartCustom,BuyNowCustom;
     ImageButton QuantityIncrement,QuantityDecrement;
     private int ActualPrice;
-    private int D_Size;
+    private int D_Size=10;
     private int D_Quantity=1;
-    private String D_Price="10";
+    String Reference;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -77,8 +89,8 @@ public class CustomDesignBuyNowPage extends AppCompatActivity implements View.On
     private void setData()
     {
         Intent intent=getIntent();
-//       Bitmap bitmap=intent.getParcelableExtra("BitMapImage");
-//       imageView.setImageBitmap(bitmap);
+     // Bitmap bitmap=intent.getParcelableExtra("BitMapImage");
+       imageView.setImageBitmap(CustomDesignShoe.bitmap);
        Name.setText("First Step Carbon");
        price.setText("2200");
        Description.setText("First Step is known for quality and great assurance after buying");
@@ -141,6 +153,7 @@ public class CustomDesignBuyNowPage extends AppCompatActivity implements View.On
 
     private void PaymentViaPaytm()
     {
+        UploadPurchaseDataToFirebase();
         //todo generate random numbers
         ActualPrice=D_Quantity*1200;
         Intent paytmIntent=new Intent();
@@ -168,11 +181,53 @@ public class CustomDesignBuyNowPage extends AppCompatActivity implements View.On
             else if (resultCode==1)
             {
                 Toast.makeText(this, "Payment success", Toast.LENGTH_SHORT).show();
-               // storePurchaseDetailsOfCustomShoeInFireBase();
+
             }
         }
     }
 
+
+
+
+
+        private void UploadPurchaseDataToFirebase() {
+
+            DatabaseReference databaseReference;
+           databaseReference=FirebaseDatabase.getInstance().getReference("Users").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("MyCustomOrders");
+           Reference=databaseReference.push().getKey();
+
+           D_CustomShoesData d_customShoesData=new D_CustomShoesData("First Step Shoe","First Step provides best shoes","1200",Reference,""+D_Quantity,""+D_Size);
+           databaseReference.child(Reference).setValue(d_customShoesData).addOnCompleteListener(new OnCompleteListener<Void>() {
+               @Override
+               public void onComplete(@NonNull Task<Void> task) {
+                   if (task.isSuccessful())
+                   {
+                    StorageReference storageReference=FirebaseStorage.getInstance().getReference("Users").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child(Reference);
+                   Bitmap bitmap=CustomDesignShoe.bitmap;
+                       ByteArrayOutputStream byteArrayOutputStream=new ByteArrayOutputStream();
+                       bitmap.compress(Bitmap.CompressFormat.JPEG,100,byteArrayOutputStream);
+                       byte[] data=byteArrayOutputStream.toByteArray();
+                                    UploadTask uploadTask=storageReference.putBytes(data);
+             uploadTask.addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
+                 @Override
+                 public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
+                     if (task.isSuccessful()) {
+                         Log.e("CustomShoe", "Image Uploaded");
+                     } else
+                     {
+                          Log.e("CustomShoe", "Image not Uploaded");
+                     }
+                 }
+             }).addOnFailureListener(new OnFailureListener() {
+                 @Override
+                 public void onFailure(@NonNull Exception e) {
+                     Log.e("CustomShoe",e.getMessage());
+                 }
+             });
+                   }
+               }
+           });
+        }
 
 
 }

@@ -8,6 +8,8 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -29,7 +31,6 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
-import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
@@ -38,27 +39,25 @@ import java.util.ArrayList;
  */
 public class FormalWomenShoe extends Fragment {
 
-       Context context;
-    public FormalWomenShoe(Context context1) {
-        this.context=context1;
-        // Required empty public constructor
-    }
     ArrayList<D_ShoesDataFromInternet> arrayListFormal=new ArrayList<>();
-    AdapterForFormalWomen adapterForFormalWomen;
+    MyAdapterForFormalWomen adapterForFormalWomen;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
         View view= inflater.inflate(R.layout.fragment_formal_women_shoe, container, false);
-        setListView(view);
+        setRecyclerView(view);
         getArrayListData();
      return view;
     }
 
-    public void setListView(View view) {
-        ListView listView=view.findViewById(R.id.ListViewInFormalWomen);
-        adapterForFormalWomen=new AdapterForFormalWomen(context,R.layout.single_view_for_label_of_shoe,arrayListFormal,"Formal");
-        listView.setAdapter(adapterForFormalWomen);
+    private void setRecyclerView(View view)
+    {
+        RecyclerView recyclerView=view.findViewById(R.id.RecyclerView_Formal_Women);
+        LinearLayoutManager manager = new LinearLayoutManager(getContext());
+        recyclerView.setLayoutManager(manager);
+        recyclerView.setHasFixedSize(true);
+        adapterForFormalWomen=new MyAdapterForFormalWomen(arrayListFormal);
+        recyclerView.setAdapter(adapterForFormalWomen);
     }
 
     public void getArrayListData()
@@ -75,7 +74,8 @@ public class FormalWomenShoe extends Fragment {
                         String productDescriptionOfShoe=dataSnapshot1.child("ProductDescriptionOfShoe").getValue(String.class);
                         String ProductPrice=dataSnapshot1.child("ProductPriceOfShoe").getValue(String.class);
                         String productTitle=dataSnapshot1.child("ProductTitleOfShoe").getValue(String.class);
-                        D_ShoesDataFromInternet dShoesDataFromInternet=new D_ShoesDataFromInternet(productTitle,ProductPrice,productDescriptionOfShoe);
+                        String imageLocation=dataSnapshot1.child("ImageLocation").getValue(String.class);
+                        D_ShoesDataFromInternet dShoesDataFromInternet=new D_ShoesDataFromInternet(productTitle,ProductPrice,productDescriptionOfShoe,imageLocation);
                         arrayListFormal.add(dShoesDataFromInternet);
                     }
                     else
@@ -92,64 +92,48 @@ public class FormalWomenShoe extends Fragment {
             }
         });
     }
-    class AdapterForFormalWomen extends ArrayAdapter<D_ShoesDataFromInternet>
+    class MyAdapterForFormalWomen extends RecyclerView.Adapter<MyAdapterForFormalWomen.ViewHolderClass>
     {
-        ArrayList<D_ShoesDataFromInternet> d_shoesDataFromInternets;
-        Context context1;
-        String ImageCategory;
-        StorageReference storageReference;
-        Uri downloadableuri=null;
-        AdapterForFormalWomen(@NonNull Context context, int resource, @NonNull ArrayList<D_ShoesDataFromInternet> objects, String ImageCategory) {
-            super(context, resource, objects);
-            d_shoesDataFromInternets=objects;
-            context1=context;
-            this.ImageCategory=ImageCategory;
-            storageReference= FirebaseStorage.getInstance().getReference("WomenFootWear").child(ImageCategory);
-        }
-        private class ViewHolder
+
+        ArrayList<D_ShoesDataFromInternet> arrayList;
+
+        public MyAdapterForFormalWomen(ArrayList<D_ShoesDataFromInternet> arrayList1)
         {
-            ImageView imageView;
-            TextView ProductTitle,PriceOfProduct;
+            this.arrayList=arrayList1;
         }
         @NonNull
         @Override
-        public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
-            ViewHolder viewHolder;
-            if (convertView==null)
-            {
-                viewHolder=new ViewHolder();
-                convertView=LayoutInflater.from(context1).inflate(R.layout.single_view_for_label_of_shoe,parent,false);
-                viewHolder.imageView=convertView.findViewById(R.id.SingleViewForLabelOfShoe_ImageView);
-                viewHolder.PriceOfProduct=convertView.findViewById(R.id.SingleViewForLabelOfShoe_Price);
-                viewHolder.ProductTitle=convertView.findViewById(R.id.SingleViewForLabelOfShoe_Name);
-                convertView.setTag(viewHolder);
-            }else
-            {
-                viewHolder= (ViewHolder) convertView.getTag();
-            }
+        public ViewHolderClass onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
 
-            if(position<d_shoesDataFromInternets.size()) {
-                Log.e("DisplayAProduct","DownloadProduct: "+(ImageCategory+(position+1)));
-                storageReference.child(ImageCategory+(position+1)).getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-                    @Override
-                    public void onSuccess(Uri uri) {
-                        downloadableuri=uri;
-                        Log.e("DisplayAProduct","DownloadProduct: "+downloadableuri);
-                    }
-                });
-                Picasso.get().load(downloadableuri).into(viewHolder.imageView);
-                viewHolder.ProductTitle.setText(d_shoesDataFromInternets.get(position).ProductTitleOfShoe);
-                viewHolder.PriceOfProduct.setText(d_shoesDataFromInternets.get(position).ProductPriceOfShoe);
-            }
-            return convertView;
+            View view=LayoutInflater.from(getContext()).inflate(R.layout.single_view_for_label_of_shoe,parent,false);
+            return new ViewHolderClass(view);
         }
 
         @Override
-        public int getCount() {
-            Log.e("Display","Size: "+d_shoesDataFromInternets.size());
-            return d_shoesDataFromInternets.size();
+        public void onBindViewHolder(@NonNull ViewHolderClass holder, int position) {
+
+            holder.Name.setText(arrayList.get(position).ProductTitleOfShoe);
+            holder.Price.setText(arrayList.get(position).ProductPriceOfShoe);
         }
 
+
+        @Override
+        public int getItemCount() {
+            return arrayList.size();
+        }
+
+        private class ViewHolderClass extends RecyclerView.ViewHolder
+        {
+            TextView Name,Price;
+            ImageView ProductImage;
+            public ViewHolderClass(@NonNull View itemView)
+            {
+                super(itemView);
+                Name=itemView.findViewById(R.id.SingleViewForLabelOfShoe_Name);
+                Price=itemView.findViewById(R.id.SingleViewForLabelOfShoe_Price);
+                ProductImage=itemView.findViewById(R.id.SingleViewForLabelOfShoe_ImageView);
+            }
+        }
     }
 
 }

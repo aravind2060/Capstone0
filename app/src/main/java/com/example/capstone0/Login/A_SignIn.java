@@ -371,11 +371,7 @@ public class A_SignIn extends AppCompatActivity implements View.OnClickListener 
            D_CurrentUser.setEmail(EmailData);
            D_CurrentUser.setGender(sharedPreferences.getString("Gender","Male"));
            D_CurrentUser.setName(sharedPreferences.getString("Name",""));
-           D_CurrentUser.setNoOfAddress(sharedPreferences.getInt("noOfAddress",0));
            D_CurrentUser.setPhone(sharedPreferences.getString("Phone",""));
-           D_CurrentUser.setNoOfWishListedProducts(sharedPreferences.getInt("noOfWishListedProducts",0));
-           D_CurrentUser.setNoOfPreviousOrders(sharedPreferences.getInt("noOfPreviousOrders",0));
-           D_CurrentUser.setNoOfProductsInCart(sharedPreferences.getInt("noOfProductsInCart",0));
        }
     }
     private  void setDataIntoSharedPreference()
@@ -386,10 +382,6 @@ public class A_SignIn extends AppCompatActivity implements View.OnClickListener 
         editor.putString("Email",D_CurrentUser.getEmail());
         editor.putString("Gender",D_CurrentUser.getGender());
         editor.putString("Phone",D_CurrentUser.getPhone());
-        editor.putInt("noOfAddress",D_CurrentUser.getNoOfAddress());
-        editor.putInt("noOfWishListedProducts",D_CurrentUser.getNoOfWishListedProducts());
-        editor.putInt("noOfPreviousOrders",D_CurrentUser.getNoOfPreviousOrders());
-        editor.putInt("noOfProductsInCart",D_CurrentUser.getNoOfProductsInCart());
         editor.commit();
     }
 
@@ -413,7 +405,7 @@ public class A_SignIn extends AppCompatActivity implements View.OnClickListener 
                         D_UserDataToStoreInFirebase d_currentUser=dataSnapshot.getValue(D_UserDataToStoreInFirebase.class);
                         if (d_currentUser!=null) {
                             setData(d_currentUser);
-                            Log.e("Astask",d_currentUser.Email);
+                            Log.e("Asynctask",d_currentUser.Email);
                             setDataIntoSharedPreference();
                         }
                         else
@@ -433,7 +425,6 @@ public class A_SignIn extends AppCompatActivity implements View.OnClickListener 
 
         private void setData(D_UserDataToStoreInFirebase d_currentUser) {
             String Name,Phone,Email,Gender;
-            int noOfAddress,noOfPreviousOrders,noOfProductsInCart,noOfWishListedProducts;
             if (d_currentUser.Name==null)
                 Name="";
             else
@@ -450,38 +441,10 @@ public class A_SignIn extends AppCompatActivity implements View.OnClickListener 
                 Gender="";
             else
                 Gender=d_currentUser.Gender;
-            if (d_currentUser.noOfAddress==0)
-                noOfAddress=0;
-            else if (d_currentUser.noOfAddress>=1)
-                noOfAddress=d_currentUser.noOfAddress;
-            else
-                noOfAddress=0;
-            if (d_currentUser.noPreviousOrders==0)
-                noOfPreviousOrders=0;
-            else if (d_currentUser.noPreviousOrders>=1)
-                noOfPreviousOrders=d_currentUser.noPreviousOrders;
-            else
-                noOfPreviousOrders=0;
-            if (d_currentUser.noOfItemsInCart==0)
-                noOfProductsInCart=0;
-            else if (d_currentUser.noOfItemsInCart>=1)
-                noOfProductsInCart=d_currentUser.noOfItemsInCart;
-            else
-                noOfProductsInCart=0;
-            if (d_currentUser.noOfWishListedProducts==0)
-                noOfWishListedProducts=0;
-            else if (d_currentUser.noOfWishListedProducts>=1)
-                noOfWishListedProducts=d_currentUser.noOfWishListedProducts;
-            else
-                noOfWishListedProducts=0;
             D_CurrentUser.setName(Name);
             D_CurrentUser.setPhone(Phone);
             D_CurrentUser.setEmail(Email);
             D_CurrentUser.setGender(Gender);
-            D_CurrentUser.setNoOfProductsInCart(noOfProductsInCart);
-            D_CurrentUser.setNoOfAddress(noOfAddress);
-            D_CurrentUser.setNoOfPreviousOrders(noOfPreviousOrders);
-            D_CurrentUser.setNoOfWishListedProducts(noOfWishListedProducts);
         }
 
     }

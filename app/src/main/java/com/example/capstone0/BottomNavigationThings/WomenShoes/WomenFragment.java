@@ -77,35 +77,22 @@ public class WomenFragment extends Fragment {
        @NonNull
        @Override
        public Fragment getItem(int position) {
-           DisplayAProductOfWomenShoe displayAProductOfWomenShoe=null;
            switch (position)
            {
                case 0:
-//                   displayAProductOfWomenShoe=new DisplayAProductOfWomenShoe();
-                   return new FormalWomenShoe(getContext());
-//                   break;
+                   return new FormalWomenShoe();
                case 1:
-//                   displayAProductOfWomenShoe=new DisplayAProductOfWomenShoe();
-//                   break;
-                   return new SneakersWomenShoe(getContext());
+                   return new SneakersWomenShoe();
                case 2:
-//                   displayAProductOfWomenShoe=new DisplayAProductOfWomenShoe();
-//                   break;
-                   return new SportsWomenShoe(getContext());
+                   return new SportsWomenShoe();
                case 3:
-//                   displayAProductOfWomenShoe=new DisplayAProductOfWomenShoe();
-//                   break;
-                   return new SmartWomenShoe(getContext());
+                   return new SmartWomenShoe();
                case 4:
-//                   displayAProductOfWomenShoe=new DisplayAProductOfWomenShoe();
-//                   break;
-                   return new EthnicWomenShoe(getContext());
+                   return new EthnicWomenShoe();
                case 5:
-//                   displayAProductOfWomenShoe=new DisplayAProductOfWomenShoe();
-//                   break;
-                   return new CasualWomenShoe(getContext());
+                   return new CasualWomenShoe();
            }
-           return displayAProductOfWomenShoe;
+          return null;
        }
 
        @Override

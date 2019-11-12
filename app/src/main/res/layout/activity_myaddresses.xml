@@ -45,10 +45,10 @@
             android:layout_marginTop="15dp"
             android:layout_marginBottom="10dp"
             />
-            <ListView
-                android:id="@+id/MyAddress_Fragment_ListView"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_below="@id/MyAddress_Fragment_No.of_Address" />
+           <androidx.recyclerview.widget.RecyclerView
+               android:id="@+id/MyAddress_Fragment_RecyclerView"
+               android:layout_below="@id/MyAddress_Fragment_No.of_Address"
+               android:layout_width="match_parent"
+               android:layout_height="match_parent"/>
 
 </RelativeLayout>

@@ -122,12 +122,9 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
     }
     private void clearCurrentUserData()
     {
-        D_CurrentUser.setNoOfPreviousOrders(0);
-        D_CurrentUser.setNoOfAddress(0);
         D_CurrentUser.setGender(null);
         D_CurrentUser.setPhone(null);
         D_CurrentUser.setName(null);
         D_CurrentUser.setEmail(null);
-        D_CurrentUser.setNoOfProductsInCart(0);
     }
 }

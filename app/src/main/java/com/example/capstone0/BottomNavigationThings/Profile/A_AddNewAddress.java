@@ -36,7 +36,6 @@ public class A_AddNewAddress extends AppCompatActivity implements View.OnClickLi
     ImageView gpsIcon;
     D_Address d_address=new D_Address();
     Toolbar toolbar;
-    int noofaddress= D_CurrentUser.getNoOfAddress();
     RadioGroup radioGroup;
     String AddressType;
 
@@ -100,9 +99,8 @@ public class A_AddNewAddress extends AppCompatActivity implements View.OnClickLi
 
     private void saveInFirebase() {
 
-       int count_noof_address=noofaddress;
-       count_noof_address=count_noof_address+1;
-        FirebaseDatabase.getInstance().getReference("Users").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("Addresses"+count_noof_address)
+        FirebaseDatabase.getInstance().getReference("Users").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("Addresses")
+                .push()
                 .setValue(d_address).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
@@ -117,15 +115,6 @@ public class A_AddNewAddress extends AppCompatActivity implements View.OnClickLi
                 }
             }
         });
-
-       FirebaseDatabase.getInstance().getReference("Users").child(FirebaseAuth.getInstance().getCurrentUser().getUid())
-               .child("noOfAddress").setValue(count_noof_address).addOnCompleteListener(new OnCompleteListener<Void>() {
-           @Override
-           public void onComplete(@NonNull Task<Void> task) {
-               if (task.isSuccessful())
-                   D_CurrentUser.noOfAddress=noofaddress+1;
-           }
-       });
 
     }
 

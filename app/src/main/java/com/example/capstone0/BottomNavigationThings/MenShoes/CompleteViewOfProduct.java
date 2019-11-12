@@ -240,7 +240,7 @@ public class CompleteViewOfProduct extends AppCompatActivity implements View.OnC
 
            D_PreviousOrdersAndPresentInCartOrders d_previousOrdersAndPresentInCartOrders1=d_previousOrdersAndPresentInCartOrders[0];
 
-           DatabaseReference databaseReference =FirebaseDatabase.getInstance().getReference("Users").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("Purchased"+(D_CurrentUser.getNoOfPreviousOrders()+1));
+           DatabaseReference databaseReference =FirebaseDatabase.getInstance().getReference("Users").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("MyOrders").push();
                    databaseReference.setValue(d_previousOrdersAndPresentInCartOrders1).addOnCompleteListener(new OnCompleteListener<Void>() {
                @Override
                public void onComplete(@NonNull Task<Void> task) {
@@ -250,14 +250,6 @@ public class CompleteViewOfProduct extends AppCompatActivity implements View.OnC
                        isSuccess=false;
                }
            });
-              databaseReference.child("noOfPreviousOrders").setValue(D_CurrentUser.getNoOfPreviousOrders()+1).addOnCompleteListener(new OnCompleteListener<Void>() {
-                  @Override
-                  public void onComplete(@NonNull Task<Void> task) {
-                      if (task.isSuccessful())
-                          D_CurrentUser.setNoOfPreviousOrders(D_CurrentUser.getNoOfPreviousOrders()+1);
-                  }
-              });
-
 
            return isSuccess;
        }
@@ -279,7 +271,7 @@ public class CompleteViewOfProduct extends AppCompatActivity implements View.OnC
        protected Boolean doInBackground(D_PreviousOrdersAndPresentInCartOrders... d_previousOrdersAndPresentInCartOrders) {
            
            D_PreviousOrdersAndPresentInCartOrders d_previousOrdersAndPresentInCartOrders1=d_previousOrdersAndPresentInCartOrders[0];
-           DatabaseReference databaseReference=FirebaseDatabase.getInstance().getReference("Users").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("Cart"+(D_CurrentUser.getNoOfProductsInCart()+1));
+           DatabaseReference databaseReference=FirebaseDatabase.getInstance().getReference("Users").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("MyCart").push();
            
            databaseReference.setValue(d_previousOrdersAndPresentInCartOrders1).addOnCompleteListener(new OnCompleteListener<Void>() {
                @Override
@@ -288,13 +280,6 @@ public class CompleteViewOfProduct extends AppCompatActivity implements View.OnC
                        isSuccess=true;
                    else
                        isSuccess=false;
-               }
-           });
-           databaseReference.child("noOfProductsInCart").setValue(D_CurrentUser.noOfProductsInCart+1).addOnCompleteListener(new OnCompleteListener<Void>() {
-               @Override
-               public void onComplete(@NonNull Task<Void> task) {
-                   if (task.isSuccessful())
-                       D_CurrentUser.noOfProductsInCart+=1;
                }
            });
            return isSuccess;
@@ -317,7 +302,7 @@ public class CompleteViewOfProduct extends AppCompatActivity implements View.OnC
        protected Boolean doInBackground(D_PreviousOrdersAndPresentInCartOrders... d_previousOrdersAndPresentInCartOrders) {
            D_PreviousOrdersAndPresentInCartOrders d_previousOrdersAndPresentInCartOrders1=d_previousOrdersAndPresentInCartOrders[0];
 
-           DatabaseReference databaseReference=FirebaseDatabase.getInstance().getReference("Users").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("WishList"+(D_CurrentUser.noOfWishListedProducts+1));
+           DatabaseReference databaseReference=FirebaseDatabase.getInstance().getReference("Users").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("MyWishList").push();
                   databaseReference.setValue(d_previousOrdersAndPresentInCartOrders1).addOnCompleteListener(new OnCompleteListener<Void>() {
                       @Override
                       public void onComplete(@NonNull Task<Void> task) {
@@ -330,13 +315,6 @@ public class CompleteViewOfProduct extends AppCompatActivity implements View.OnC
                       }
                   });
 
-                  databaseReference.child("noOfWishListedProducts").setValue(D_CurrentUser.noOfWishListedProducts+1).addOnCompleteListener(new OnCompleteListener<Void>() {
-                      @Override
-                      public void onComplete(@NonNull Task<Void> task) {
-                          if (task.isSuccessful())
-                              D_CurrentUser.noOfWishListedProducts+=1;
-                      }
-                  });
 
            return isSuccess;
        }

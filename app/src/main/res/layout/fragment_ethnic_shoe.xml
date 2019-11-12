@@ -5,8 +5,8 @@
     android:layout_height="match_parent"
     tools:context=".BottomNavigationThings.MenShoes.EthnicShoe">
 
-    <ListView
-        android:id="@+id/ListViewInEthnicMen"
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/RecyclerViewInEthnicMen"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
 

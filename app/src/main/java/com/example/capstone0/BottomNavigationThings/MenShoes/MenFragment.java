@@ -39,17 +39,6 @@ import java.util.ArrayList;
 public class MenFragment extends Fragment{
 
 
-
-    public static MenFragment newInstance() {
-        return new MenFragment();
-    }
-
-    ArrayList<D_ShoesDataFromInternet> dShoesDataFromInternetsFormal =new ArrayList<>();
-    ArrayList<D_ShoesDataFromInternet> dShoesDataFromInternetsCasual=new ArrayList<>();
-    ArrayList<D_ShoesDataFromInternet>dShoesDataFromInternetsSports=new ArrayList<>();
-    ArrayList<D_ShoesDataFromInternet>dShoesDataFromInternetsSneakers=new ArrayList<>();
-    ArrayList<D_ShoesDataFromInternet>dShoesDataFromInternetsSmart=new ArrayList<>();
-    ArrayList<D_ShoesDataFromInternet>dShoesDataFromInternetsEthnic=new ArrayList<>();
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
@@ -83,43 +72,23 @@ public class MenFragment extends Fragment{
         @NonNull
         @Override
         public Fragment getItem(int position) {
-            DisplayAProduct displayAProduct=null;
             switch (position)
             {
                 case 0:
-//                    new AsyncTaskToFetchProductDetails().execute("Formal");
-//                    displayAProduct=new DisplayAProduct(getContext(), dShoesDataFromInternetsFormal,"Formal");
-//                    break;
                     return new FormalShoe(getContext());
                 case 1:
-//                    new AsyncTaskToFetchProductDetails().execute("Sneakers");
-//
-//                    displayAProduct=new DisplayAProduct(getContext(), dShoesDataFromInternetsSneakers,"Sneakers");
-//                    break;
                     return new SneakersShoe(getContext());
                 case 2:
-//                    new AsyncTaskToFetchProductDetails().execute("Sports");
-//                    displayAProduct=new DisplayAProduct(getContext(), dShoesDataFromInternetsSports,"Sports");
-//                    break;
                     return new SportsShoe(getContext());
                 case 3:
-//                    new AsyncTaskToFetchProductDetails().execute("Smart");
-//                    displayAProduct=new DisplayAProduct(getContext(), dShoesDataFromInternetsSmart,"Smart");
-//                    break;
                     return new SmartShoe(getContext());
                 case 4:
-//                    new AsyncTaskToFetchProductDetails().execute("Ethnic");
-//                    displayAProduct=new DisplayAProduct(getContext(), dShoesDataFromInternetsEthnic,"Ethnic");
-//                    break;
                     return new EthnicShoe(getContext());
                 case 5:
-//                    new AsyncTaskToFetchProductDetails().execute("Casual");
-//                    displayAProduct=new DisplayAProduct(getContext(), dShoesDataFromInternetsCasual,"Casual");
-//                    break;
                     return new CasualShoe(getContext());
 
             }
-            return displayAProduct;
+            return null;
         }
 
         @Override
@@ -154,171 +123,5 @@ public class MenFragment extends Fragment{
                 return Name;
         }
     }
-
-
-    class AsyncTaskToFetchProductDetails extends AsyncTask<String,Void,ArrayList<D_ShoesDataFromInternet>>
-    {
-
-
-        ArrayList<D_ShoesDataFromInternet> arrayList=new ArrayList<>();
-
-        @Override
-        protected void onPostExecute(ArrayList<D_ShoesDataFromInternet> arrayList) {
-            super.onPostExecute(arrayList);
-            dShoesDataFromInternetsFormal=arrayList;
-        }
-
-        @Override
-        protected ArrayList<D_ShoesDataFromInternet> doInBackground(String...strings) {
-            String ImageCategory=strings[0];
-            DatabaseReference databaseReference=FirebaseDatabase.getInstance().getReference("MenFootWear").child(ImageCategory);
-            if (ImageCategory.contentEquals("Formal"))
-            {
-                databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                        for (DataSnapshot dataSnapshot1:dataSnapshot.getChildren()) {
-                            D_ShoesDataFromInternet dShoesDataFromInternet = dataSnapshot1.getValue(D_ShoesDataFromInternet.class);
-                            if (dShoesDataFromInternet != null) {
-                                arrayList.add(dShoesDataFromInternet);
-                               Log.e("MenFragment","Going inside");
-                            }
-                            else
-                            {
-                                Log.e("MenFragment","Unable To go inside");
-                            }
-                        }
-                    }
-
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                    }
-                });
-            }
-            else if (ImageCategory.contentEquals("Casual"))
-            {
-                databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                        for (DataSnapshot dataSnapshot1:dataSnapshot.getChildren()) {
-                            D_ShoesDataFromInternet dShoesDataFromInternet = dataSnapshot1.getValue(D_ShoesDataFromInternet.class);
-                            if (dShoesDataFromInternet != null) {
-                                dShoesDataFromInternetsCasual.add(dShoesDataFromInternet);
-                                Log.e("MenFragment","Going inside");
-                            }
-                            else
-                            {
-                                Log.e("MenFragment","Unable To go inside");
-                            }
-                        }
-                    }
-
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                    }
-                });
-            }
-            else if (ImageCategory.contentEquals("Sports"))
-            {
-                databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                        for (DataSnapshot dataSnapshot1:dataSnapshot.getChildren()) {
-                            D_ShoesDataFromInternet dShoesDataFromInternet = dataSnapshot1.getValue(D_ShoesDataFromInternet.class);
-                            if (dShoesDataFromInternet != null) {
-                                dShoesDataFromInternetsSports.add(dShoesDataFromInternet);
-                                Log.e("MenFragment","Going inside");
-                            }
-                            else
-                            {
-                                Log.e("MenFragment","Unable To go inside");
-                            }
-                        }
-                    }
-
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                    }
-                });
-            }
-            else if (ImageCategory.contentEquals("Sneakers"))
-            {
-                databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                        for (DataSnapshot dataSnapshot1:dataSnapshot.getChildren()) {
-                            D_ShoesDataFromInternet dShoesDataFromInternet = dataSnapshot1.getValue(D_ShoesDataFromInternet.class);
-                            if (dShoesDataFromInternet != null) {
-                                dShoesDataFromInternetsSneakers.add(dShoesDataFromInternet);
-                                Log.e("MenFragment","Going inside");
-                            }
-                            else
-                            {
-                                Log.e("MenFragment","Unable To go inside");
-                            }
-                        }
-                    }
-
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                    }
-                });
-            }
-            else if (ImageCategory.contentEquals("Smart"))
-            {
-                databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                        for (DataSnapshot dataSnapshot1:dataSnapshot.getChildren()) {
-                            D_ShoesDataFromInternet dShoesDataFromInternet = dataSnapshot1.getValue(D_ShoesDataFromInternet.class);
-                            if (dShoesDataFromInternet != null) {
-                                dShoesDataFromInternetsSmart.add(dShoesDataFromInternet);
-                                Log.e("MenFragment","Going inside");
-                            }
-                            else
-                            {
-                                Log.e("MenFragment","Unable To go inside");
-                            }
-                        }
-                    }
-
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                    }
-                });
-            }
-            else if (ImageCategory.contentEquals("Ethnic"))
-            {
-                databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                        for (DataSnapshot dataSnapshot1:dataSnapshot.getChildren()) {
-                            D_ShoesDataFromInternet dShoesDataFromInternet = dataSnapshot1.getValue(D_ShoesDataFromInternet.class);
-                            if (dShoesDataFromInternet != null) {
-                                dShoesDataFromInternetsEthnic.add(dShoesDataFromInternet);
-                                Log.e("MenFragment","Going inside");
-                            }
-                            else
-                            {
-                                Log.e("MenFragment","Unable To go inside");
-                            }
-                        }
-                    }
-
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                    }
-                });
-            }
-            return null;
-        }
-    }
-
 
 }

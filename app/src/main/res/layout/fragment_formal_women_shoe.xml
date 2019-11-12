@@ -5,8 +5,8 @@
     android:layout_height="match_parent"
     tools:context=".BottomNavigationThings.WomenShoes.FormalWomenShoe">
 
-    <ListView
-        android:id="@+id/ListViewInFormalWomen"
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/RecyclerView_Formal_Women"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
 

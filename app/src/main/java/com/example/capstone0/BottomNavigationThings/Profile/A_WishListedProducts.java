@@ -138,26 +138,23 @@ public class A_WishListedProducts extends AppCompatActivity {
         @Override
         protected ArrayList<D_PreviousOrdersAndPresentInCartOrders> doInBackground(Void... voids) {
 
-            int countNoWishListedProducts= D_CurrentUser.noOfWishListedProducts;
-            if (countNoWishListedProducts==0)
-                return arrayList1;
-            DatabaseReference databaseReference= FirebaseDatabase.getInstance().getReference("Users").child(FirebaseAuth.getInstance().getCurrentUser().getUid());
-            for (int i=1;i<=countNoWishListedProducts;i++)
-            {
-               databaseReference.child("WishListed"+i).addListenerForSingleValueEvent(new ValueEventListener() {
-                   @Override
-                   public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                       if (dataSnapshot.exists())
-                           arrayList1.add(dataSnapshot.getValue(D_PreviousOrdersAndPresentInCartOrders.class));
-                   }
+            DatabaseReference databaseReference=FirebaseDatabase.getInstance().getReference("Users").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("MyWishList");
+            databaseReference.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    for (DataSnapshot dataSnapshot1:dataSnapshot.getChildren())
+                    {
+                        D_PreviousOrdersAndPresentInCartOrders d_previousOrdersAndPresentInCartOrders=dataSnapshot1.getValue(D_PreviousOrdersAndPresentInCartOrders.class);
+                        if (d_previousOrdersAndPresentInCartOrders!=null)
+                            arrayList1.add(d_previousOrdersAndPresentInCartOrders);
+                    }
+                }
 
-                   @Override
-                   public void onCancelled(@NonNull DatabaseError databaseError) {
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
 
-                   }
-               });
-            }
-
+                }
+            });
             return arrayList1;
 
         }
