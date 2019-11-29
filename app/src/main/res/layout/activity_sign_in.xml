@@ -103,5 +103,13 @@
             android:text="@string/Reset"
             />
     </LinearLayout>
-
+     <TextView
+         android:id="@+id/Skip_LogIn"
+         android:layout_width="wrap_content"
+         android:layout_height="wrap_content"
+         android:layout_below="@id/Sign_In_LinearLayout_Reset_Password_Link"
+         android:layout_centerHorizontal="true"
+         android:text="Skip"
+         android:textColor="@color/Green"
+         />
 </RelativeLayout>

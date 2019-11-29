@@ -2,14 +2,19 @@ package com.example.capstone0.BottomNavigationThings.MenShoes;
 
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import android.os.Handler;
+import android.os.Message;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -26,17 +31,18 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
-/**
- * A simple {@link Fragment} subclass.
- */
 public class CasualShoe extends Fragment {
-
+    interface OnCardViewItemClickListener
+    {
+        void onItemClickListenerOfCardView(int position);
+    }
 
     ArrayList<D_ShoesDataFromInternet> arrayListCasual=new ArrayList<>();
     Context context;
      MyAdapterForCasualmen myAdapterCasual;
-
+     SwipeRefreshLayout swipeRefreshLayout;
     CasualShoe(Context context)
     {
         this.context=context;
@@ -45,17 +51,63 @@ public class CasualShoe extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view=LayoutInflater.from(context).inflate(R.layout.fragment_casual_shoe,container,false);
+        setSwipeRefreshLayout(view);
         getArrayListData();
         setRecyclerView(view);
         return view;
     }
+
+    public void setSwipeRefreshLayout(View view)
+    {
+        swipeRefreshLayout=view.findViewById(R.id.swipe_men_casual);
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                swipeRefreshLayout.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        swipeRefreshLayout.setRefreshing(true);
+                        mHandler.sendEmptyMessage(0);
+                    }
+                }, 1000);
+            }
+        });
+    }
+    Handler mHandler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            //super.handleMessage(msg);
+            Collections.shuffle(arrayListCasual);
+            myAdapterCasual.notifyDataSetChanged();
+            swipeRefreshLayout.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    swipeRefreshLayout.setRefreshing(false);
+                }
+            }, 2000);
+        }
+    };
     public void setRecyclerView(View view) {
         RecyclerView recyclerView=view.findViewById(R.id.RecyclerViewInCasualMen);
-        LinearLayoutManager manager = new LinearLayoutManager(getContext());
+        GridLayoutManager manager=new GridLayoutManager(getContext(),2);
         recyclerView.setLayoutManager(manager);
         recyclerView.setHasFixedSize(true);
        myAdapterCasual=new MyAdapterForCasualmen(arrayListCasual);
         recyclerView.setAdapter(myAdapterCasual);
+
+        myAdapterCasual.setOnCardViewItemClickListener(new OnCardViewItemClickListener() {
+            @Override
+            public void onItemClickListenerOfCardView(int position) {
+                Intent intent=new Intent(getContext(),CompleteViewOfProduct.class);
+                intent.putExtra("ImageLocation",arrayListCasual.get(position).ImageLocation);
+                intent.putExtra("ProductTitle",arrayListCasual.get(position).ProductTitleOfShoe);
+                intent.putExtra("ProductPrice",arrayListCasual.get(position).ProductPriceOfShoe);
+                intent.putExtra("ProductDescription",arrayListCasual.get(position).ProductDescriptionOfShoe);
+                intent.putExtra("ProductCategoryByGender","MenFootWear");
+                intent.putExtra("ProductCategoryByMaterial","Casual");
+                startActivity(intent);
+            }
+        });
     }
 
     public void getArrayListData()
@@ -75,10 +127,6 @@ public class CasualShoe extends Fragment {
                         String imageLocation=dataSnapshot1.child("ImageLocation").getValue(String.class);
                         D_ShoesDataFromInternet dShoesDataFromInternet=new D_ShoesDataFromInternet(productTitle,ProductPrice,productDescriptionOfShoe,imageLocation);
                         arrayListCasual.add(dShoesDataFromInternet);
-                    }
-                    else
-                    {
-
                     }
                 }
                 myAdapterCasual.notifyDataSetChanged();
@@ -124,11 +172,14 @@ public class CasualShoe extends Fragment {
         }
     }
 
-    class MyAdapterForCasualmen extends RecyclerView.Adapter<MyAdapterForCasualmen.ViewHolderClass>
-    {
+    class MyAdapterForCasualmen extends RecyclerView.Adapter<MyAdapterForCasualmen.ViewHolderClass> {
 
         ArrayList<D_ShoesDataFromInternet> arrayList;
-
+        OnCardViewItemClickListener onCardViewItemClickListener;
+        public void setOnCardViewItemClickListener(OnCardViewItemClickListener onCardViewItemClickListener1)
+        {
+            this.onCardViewItemClickListener=onCardViewItemClickListener1;
+        }
         public MyAdapterForCasualmen(ArrayList<D_ShoesDataFromInternet> arrayList1)
         {
             this.arrayList=arrayList1;
@@ -143,10 +194,10 @@ public class CasualShoe extends Fragment {
 
         @Override
         public void onBindViewHolder(@NonNull ViewHolderClass holder, int position) {
+               holder.Name.setText(arrayList.get(position).ProductTitleOfShoe);
+               holder.Price.setText(arrayList.get(position).ProductPriceOfShoe);
+               Glide.with(getContext()).load(arrayList.get(position).ImageLocation).into(holder.ProductImage);
 
-            holder.Name.setText(arrayList.get(position).ProductTitleOfShoe);
-            holder.Price.setText(arrayList.get(position).ProductPriceOfShoe);
-            Glide.with(getContext()).load(arrayList.get(position).ImageLocation).into(holder.ProductImage);
         }
 
 
@@ -154,6 +205,7 @@ public class CasualShoe extends Fragment {
         public int getItemCount() {
             return arrayList.size();
         }
+
 
         private class ViewHolderClass extends RecyclerView.ViewHolder
         {
@@ -165,6 +217,20 @@ public class CasualShoe extends Fragment {
                 Name=itemView.findViewById(R.id.SingleViewForLabelOfShoe_Name);
                 Price=itemView.findViewById(R.id.SingleViewForLabelOfShoe_Price);
                 ProductImage=itemView.findViewById(R.id.SingleViewForLabelOfShoe_ImageView);
+
+                itemView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        if (onCardViewItemClickListener!=null)
+                        {
+                            int position=getAdapterPosition();
+                            if (position!=RecyclerView.NO_POSITION)
+                            {
+                                onCardViewItemClickListener.onItemClickListenerOfCardView(position);
+                            }
+                        }
+                    }
+                });
             }
         }
     }

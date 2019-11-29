@@ -4,8 +4,9 @@
 
     <ImageView
         android:id="@+id/ImageOfPurchasedProduct"
-        android:layout_width="150dp"
+        android:layout_width="match_parent"
         android:layout_height="150dp"
+        android:scaleType="fitXY"
         />
     <LinearLayout
         android:id="@+id/LinearLayout1_MyOrders"

@@ -118,17 +118,7 @@ public class A_AccountSettings extends AppCompatActivity implements View.OnClick
 
   private void uploadToFirebase()
   {
-    DatabaseReference databaseReference=FirebaseDatabase.getInstance().getReference(gender.getText().toString()).child(type.getText().toString());
-    String refernce=databaseReference.push().getKey();
-      Toast.makeText(this, ""+refernce, Toast.LENGTH_SHORT).show();
-    D_ShoesDataFromInternet d_shoesDataFromInternet=new D_ShoesDataFromInternet("Formal","1200","First Step provides best shoes",refernce);
-    databaseReference.child(refernce).setValue(d_shoesDataFromInternet).addOnCompleteListener(new OnCompleteListener<Void>() {
-        @Override
-        public void onComplete(@NonNull Task<Void> task) {
-            if (task.isSuccessful())
-                Toast.makeText(A_AccountSettings.this, "Uploaded bro", Toast.LENGTH_SHORT).show();
-        }
-    });
+
   }
 
 

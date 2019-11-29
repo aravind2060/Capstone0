@@ -3,9 +3,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:id="@+id/swipe_mycart"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/swipe_myOrders"
-    tools:context=".BottomNavigationThings.Profile.A_MyOrders">
+    tools:context=".BottomNavigationThings.Profile.A_MyCart">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -14,16 +14,16 @@
         >
 
         <androidx.appcompat.widget.Toolbar
-            android:id="@+id/Toolbar_MyOrders"
+            android:id="@+id/Toolbar_MyCart"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            app:title="@string/Profile_MyOrders"
+            app:title="@string/Profile_MyCart"
             app:titleTextColor="@color/White"
             android:background="@color/DodgerBlue"
             app:navigationIcon="@drawable/back_navigation"
             />
         <TextView
-            android:id="@+id/NumberOfPastOrders"
+            android:id="@+id/NumberOfMyCartOrders"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Number Of Past Orders:"
@@ -37,7 +37,7 @@
             app:cardUseCompatPadding="true"
             >
             <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/MyOrders_RecyclerView"
+                android:id="@+id/MyCart_RecyclerView"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 />

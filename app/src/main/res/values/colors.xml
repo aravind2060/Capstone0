@@ -11,4 +11,6 @@
     <color name="DarkGreen">#4C9A2A</color>
     <color name="Black">#000</color>
     <color name="LigherGray">#676767</color>
+    <color name="CementGray"> #808080</color>
+    <color name="turquoise">#40e0d0</color>
 </resources>

@@ -1,21 +1,9 @@
 package com.example.capstone0;
 
 public class D_CurrentUser {
-    public static String Name="Male",Email,Gender,Phone;
+    public static String Name,Email,Gender,Phone;
 
-
-
-    public D_CurrentUser() {
-    }
-    public D_CurrentUser(String name,String email,String gender,String phone)
-    {
-        Name=name;
-        Email=email;
-        Gender=gender;
-        Phone=phone;
-
-    }
-    public static String getName() {
+     public static String getName() {
         return Name;
     }
 

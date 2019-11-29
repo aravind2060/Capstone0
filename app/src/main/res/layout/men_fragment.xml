@@ -1,19 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout android:layout_height="match_parent"
+<LinearLayout android:layout_height="match_parent"
     android:layout_width="match_parent"
+    android:orientation="vertical"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     tools:context=".BottomNavigationThings.MenShoes.MenFragment">
 
-    <androidx.appcompat.widget.Toolbar
-        android:id="@+id/Toolbar_MenFragment"
-        android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        android:background="@color/DodgerBlue"
-        app:titleTextColor="@color/White"
-        app:title="MenFootWear"
-        />
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/Toolbar_MenFragment"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            app:title="MenFootWear"
+            app:titleTextColor="@color/White"
+            android:background="@color/DodgerBlue"
+             />
     <com.google.android.material.tabs.TabLayout
         android:id="@+id/TabLayoutInMenFragment"
         android:layout_width="match_parent"
@@ -21,10 +22,11 @@
         app:tabMode="scrollable"
         app:tabSelectedTextColor="@color/Green"
         app:tabIndicatorColor="@color/DarkGreen"
-        android:layout_below="@id/Toolbar_MenFragment"
         />
     <androidx.viewpager.widget.ViewPager
         android:id="@+id/ViewPagerInMenFragment"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
-</RelativeLayout>
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        />
+</LinearLayout>

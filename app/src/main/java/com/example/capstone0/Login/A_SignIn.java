@@ -10,15 +10,18 @@ import android.util.Log;
 import android.util.Patterns;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.capstone0.BottomNavigationThings.MenShoes.A_BuyNow;
 import com.example.capstone0.D_CurrentUser;
 import com.example.capstone0.MainActivity;
 import com.example.capstone0.R;
+import com.example.capstone0.utils.CommonClassForSharedPreferences;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
@@ -54,6 +57,7 @@ public class A_SignIn extends AppCompatActivity implements View.OnClickListener 
     TextInputEditText Email,Password;
     TextInputLayout Email1,Password1;
     SignInButton GoogleSignInBtn;
+    TextView SkipLogIn;
     private static final Pattern PASSWORD_PATTERN =
             Pattern.compile("^" +
                     //"(?=.*[0-9])" +         //at least 1 digit
@@ -79,10 +83,10 @@ public class A_SignIn extends AppCompatActivity implements View.OnClickListener 
      Password=findViewById(R.id.sign_in_txt_edit_txt_password);
     Email1=findViewById(R.id.sign_in_txt_layout_1);
     Password1=findViewById(R.id.sign_in_txt_layout_2);
-
+    SkipLogIn=findViewById(R.id.Skip_LogIn);
     GoogleSignInBtn=findViewById(R.id.Sign_In_Btn_Google_SignIn_4);
     GoogleSignInBtn.setOnClickListener(this);
-
+     SkipLogIn.setOnClickListener(this);
     firebaseAuth=FirebaseAuth.getInstance();
 
      SignIn.setOnClickListener(this);
@@ -94,10 +98,11 @@ public class A_SignIn extends AppCompatActivity implements View.OnClickListener 
         FirebaseUser currentUser=firebaseAuth.getCurrentUser();
         if (currentUser!=null && currentUser.isEmailVerified())
         {
-            getDataFromSharedPreferences();
+            CommonClassForSharedPreferences.getDataFromSharedPreference(getApplicationContext());
             loadDataOfCurrentUserDataUsingAsyncTaskClass();
-           startActivity(new Intent(getApplicationContext(),MainActivity.class));
+            startActivity(new Intent(getApplicationContext(),MainActivity.class));
         }
+
     }
 
 
@@ -125,6 +130,18 @@ public class A_SignIn extends AppCompatActivity implements View.OnClickListener 
       {
         SetGoogleSignIn();
       }
+      else if (v.getId()==R.id.Skip_LogIn)
+      {
+          setSkipLogIn();
+      }
+    }
+
+    private void setSkipLogIn() {
+        D_CurrentUser.setName(null);
+        D_CurrentUser.setGender(null);
+        D_CurrentUser.setPhone(null);
+        D_CurrentUser.setEmail(null);
+        startActivity(new Intent(getApplicationContext(),MainActivity.class));
     }
 
     /*
@@ -193,7 +210,7 @@ public class A_SignIn extends AppCompatActivity implements View.OnClickListener 
                             Toast.makeText(getApplicationContext(),"Google signin Success",Toast.LENGTH_SHORT).show();
                             FirebaseUser user = firebaseAuth.getCurrentUser();
                             storeGoogleSigInedUsersData(user);
-                            startActivity(new Intent(getApplicationContext(),MainActivity.class));
+                            controlFlow();
                         } else {
                             // If sign in fails, display a message to the user.
                             Log.w("TAG", "signInWithCredential:failure", task.getException());
@@ -282,7 +299,7 @@ public class A_SignIn extends AppCompatActivity implements View.OnClickListener 
                   {
                       new ASyncTaskToFetchCurrentUserData().execute();
                       Toast.makeText(getApplicationContext(),"Login Success",Toast.LENGTH_LONG).show();
-                      startActivity(new Intent(getApplicationContext(),MainActivity.class));
+                      controlFlow();
                   }
                   else
                   {
@@ -362,36 +379,32 @@ public class A_SignIn extends AppCompatActivity implements View.OnClickListener 
          return true;
    }
 
-    private void getDataFromSharedPreferences()
+    private void loadDataOfCurrentUserDataUsingAsyncTaskClass()
     {
-        SharedPreferences sharedPreferences=getSharedPreferences("CurrentLoggedInUserDetails",0);
-       String EmailData=sharedPreferences.getString("Email","");
-       if (!TextUtils.isEmpty(EmailData))
-       {
-           D_CurrentUser.setEmail(EmailData);
-           D_CurrentUser.setGender(sharedPreferences.getString("Gender","Male"));
-           D_CurrentUser.setName(sharedPreferences.getString("Name",""));
-           D_CurrentUser.setPhone(sharedPreferences.getString("Phone",""));
-       }
-    }
-    private  void setDataIntoSharedPreference()
-    {
-        SharedPreferences sharedPreferences=getSharedPreferences("CurrentLoggedInUserDetails",0);
-        SharedPreferences.Editor editor=sharedPreferences.edit();
-        editor.putString("Name",D_CurrentUser.getName());
-        editor.putString("Email",D_CurrentUser.getEmail());
-        editor.putString("Gender",D_CurrentUser.getGender());
-        editor.putString("Phone",D_CurrentUser.getPhone());
-        editor.commit();
-    }
-
-  private void loadDataOfCurrentUserDataUsingAsyncTaskClass()
-  {
       new ASyncTaskToFetchCurrentUserData().execute();
-  }
+    }
 
+   private void controlFlow()
+   {
+       Intent intent=getIntent();
+       int num=intent.getIntExtra("Number",0);
 
-  class ASyncTaskToFetchCurrentUserData extends AsyncTask<Void,Void,Void> {
+       if (num==0)
+       {
+        startActivity(new Intent(getApplicationContext(),MainActivity.class));
+       }
+       else if (num==1)
+       {
+           startActivity(new Intent(getApplicationContext(), A_BuyNow.class));
+       }
+       else if (num==2)
+       {
+           Intent intent1=new Intent(getApplicationContext(),MainActivity.class);
+           intent1.putExtra("SetProfileFragmentAtStart",1);
+           startActivity(intent1);
+       }
+   }
+   class ASyncTaskToFetchCurrentUserData extends AsyncTask<Void,Void,Void> {
 
         @Override
         protected Void doInBackground(Void... voids) {
@@ -406,7 +419,7 @@ public class A_SignIn extends AppCompatActivity implements View.OnClickListener 
                         if (d_currentUser!=null) {
                             setData(d_currentUser);
                             Log.e("Asynctask",d_currentUser.Email);
-                            setDataIntoSharedPreference();
+                            CommonClassForSharedPreferences.setDataIntoSharedPreference(getApplicationContext());
                         }
                         else
                         {
@@ -414,7 +427,6 @@ public class A_SignIn extends AppCompatActivity implements View.OnClickListener 
                         }
                     }
                 }
-
                 @Override
                 public void onCancelled(@NonNull DatabaseError databaseError) {
 

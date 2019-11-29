@@ -34,12 +34,6 @@ interface TaskCompletedFetchingAddress
 }
 public class A_MyAddresses extends AppCompatActivity implements View.OnClickListener, TaskCompletedFetchingAddress {
 
-    @Override
-    protected void onStart() {
-        super.onStart();
-        getAddressFromFirebase();
-        getNumberOfAddressesFromFireBase();
-    }
 
     RecyclerView recyclerview;
     ArrayList<D_Address> d_addresseslist=new ArrayList<>();
@@ -51,6 +45,8 @@ public class A_MyAddresses extends AppCompatActivity implements View.OnClickList
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        getAddressFromFirebase();
+        getNumberOfAddressesFromFireBase();
         setContentView(R.layout.activity_myaddresses);
         findViewByIds();
     }
@@ -84,9 +80,6 @@ public class A_MyAddresses extends AppCompatActivity implements View.OnClickList
             startActivity(new Intent(getApplicationContext(),A_AddNewAddress.class));
         }
     }
-
-
-
 
 
     @Override

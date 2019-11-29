@@ -17,6 +17,7 @@ import androidx.appcompat.widget.Toolbar;
 
 import com.example.capstone0.R;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
@@ -148,7 +149,12 @@ public class A_SignUp extends AppCompatActivity implements View.OnClickListener 
                             Toast.makeText(getApplicationContext(),"Something Wrong Failed to register",Toast.LENGTH_SHORT).show();
                         }
                   }
-              });
+              }).addOnFailureListener(new OnFailureListener() {
+          @Override
+          public void onFailure(@NonNull Exception e) {
+              Toast.makeText(A_SignUp.this, "Error:"+e.getMessage(), Toast.LENGTH_SHORT).show();
+          }
+      });
   }
 
   public void sendVerificationEmail()

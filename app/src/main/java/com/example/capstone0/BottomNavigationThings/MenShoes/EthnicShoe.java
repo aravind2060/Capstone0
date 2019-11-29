@@ -2,14 +2,19 @@ package com.example.capstone0.BottomNavigationThings.MenShoes;
 
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import android.os.Handler;
+import android.os.Message;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -26,17 +31,19 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
-/**
- * A simple {@link Fragment} subclass.
- */
+
 public class EthnicShoe extends Fragment {
 
-
+    interface OnCardViewItemClickListener
+    {
+        void onItemClickListenerOfCardView(int position);
+    }
     ArrayList<D_ShoesDataFromInternet> arrayListEthnic=new ArrayList<>();
     Context context;
     MyAdapterEthnicmen myAdapterEthnic;
-
+    SwipeRefreshLayout swipeRefreshLayout;
     EthnicShoe(Context context)
     {
         this.context=context;
@@ -45,17 +52,61 @@ public class EthnicShoe extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view=LayoutInflater.from(context).inflate(R.layout.fragment_ethnic_shoe,container,false);
+        setSwipeRefreshLayout(view);
         getArrayListData();
         setRecyclerView(view);
         return view;
     }
+    public void setSwipeRefreshLayout(View view)
+    {
+        swipeRefreshLayout=view.findViewById(R.id.swipe_men_ethnic);
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                swipeRefreshLayout.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        swipeRefreshLayout.setRefreshing(true);
+                        mHandler.sendEmptyMessage(0);
+                    }
+                }, 1000);
+            }
+        });
+    }
+    Handler mHandler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            //super.handleMessage(msg);
+            Collections.shuffle(arrayListEthnic);
+            myAdapterEthnic.notifyDataSetChanged();
+            swipeRefreshLayout.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    swipeRefreshLayout.setRefreshing(false);
+                }
+            }, 2000);
+        }
+    };
     private void setRecyclerView(View view) {
         RecyclerView recyclerView=view.findViewById(R.id.RecyclerViewInEthnicMen);
-        LinearLayoutManager manager = new LinearLayoutManager(getContext());
+        GridLayoutManager manager=new GridLayoutManager(getContext(),2);
         recyclerView.setLayoutManager(manager);
         recyclerView.setHasFixedSize(true);
         myAdapterEthnic=new MyAdapterEthnicmen(arrayListEthnic);
         recyclerView.setAdapter(myAdapterEthnic);
+        myAdapterEthnic.setOnCardViewItemClickListener(new OnCardViewItemClickListener() {
+            @Override
+            public void onItemClickListenerOfCardView(int position) {
+                Intent intent=new Intent(getContext(),CompleteViewOfProduct.class);
+                intent.putExtra("ImageLocation",arrayListEthnic.get(position).ImageLocation);
+                intent.putExtra("ProductTitle",arrayListEthnic.get(position).ProductTitleOfShoe);
+                intent.putExtra("ProductPrice",arrayListEthnic.get(position).ProductPriceOfShoe);
+                intent.putExtra("ProductDescription",arrayListEthnic.get(position).ProductDescriptionOfShoe);
+                intent.putExtra("ProductCategoryByGender","MenFootWear");
+                intent.putExtra("ProductCategoryByMaterial","Ethnic");
+                startActivity(intent);
+            }
+        });
     }
     public void getArrayListData()
     {
@@ -123,11 +174,16 @@ public class EthnicShoe extends Fragment {
     {
 
         ArrayList<D_ShoesDataFromInternet> arrayList;
-
+        OnCardViewItemClickListener onCardViewItemClickListener;
         public MyAdapterEthnicmen(ArrayList<D_ShoesDataFromInternet> arrayList1)
         {
             this.arrayList=arrayList1;
         }
+        public void setOnCardViewItemClickListener(OnCardViewItemClickListener onCardViewItemClickListener1)
+        {
+            this.onCardViewItemClickListener=onCardViewItemClickListener1;
+        }
+
         @NonNull
         @Override
         public ViewHolderClass onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -160,6 +216,19 @@ public class EthnicShoe extends Fragment {
                 Name=itemView.findViewById(R.id.SingleViewForLabelOfShoe_Name);
                 Price=itemView.findViewById(R.id.SingleViewForLabelOfShoe_Price);
                 ProductImage=itemView.findViewById(R.id.SingleViewForLabelOfShoe_ImageView);
+                itemView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        if (onCardViewItemClickListener!=null)
+                        {
+                            int position=getAdapterPosition();
+                            if (position!=RecyclerView.NO_POSITION)
+                            {
+                                onCardViewItemClickListener.onItemClickListenerOfCardView(position);
+                            }
+                        }
+                    }
+                });
             }
         }
     }

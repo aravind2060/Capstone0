@@ -2,12 +2,15 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.capstone0">
 
+    <uses-permission android:name="android.permission.CALL_PHONE" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.CALL_PHONE"></uses-permission>
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/launcher_icon"
@@ -15,8 +18,10 @@
         android:roundIcon="@mipmap/launcher_icon_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".BottomNavigationThings.CustomShoes.CustomDesignBuyNowPage"></activity>
-        <activity android:name=".BottomNavigationThings.Profile.A_WishListedProducts" />
+        <activity android:name=".BottomNavigationThings.Profile.A_MyCart"></activity>
+        <activity android:name=".BottomNavigationThings.Profile.A_WishList" />
+        <activity android:name=".BottomNavigationThings.MenShoes.A_BuyNow" />
+        <activity android:name=".BottomNavigationThings.CustomShoes.CustomDesignBuyNowPage" />
         <activity android:name=".BottomNavigationThings.Profile.A_MyOrders" />
         <activity android:name=".BottomNavigationThings.MenShoes.CompleteViewOfProduct" />
         <activity android:name=".BottomNavigationThings.Profile.A_AccountSettings" />
@@ -37,7 +42,8 @@
             android:screenOrientation="portrait" />
         <activity
             android:name=".MainActivity"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            android:theme="@style/NoActionBar" />
         <activity android:name=".BottomNavigationThings.Profile.A_MyAddresses" />
         <activity android:name=".BottomNavigationThings.Profile.A_AddNewAddress" />
     </application>

@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.swiperefreshlayout.widget.SwipeRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/swipe_women_casual"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".BottomNavigationThings.WomenShoes.CasualWomenShoe">
@@ -8,6 +9,6 @@
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/RecyclerView_Casual_Women"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
-
-</FrameLayout>
+        android:layout_height="match_parent"
+        />
+</androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
