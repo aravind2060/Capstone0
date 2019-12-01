@@ -25,9 +25,12 @@ import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.RelativeLayout;
@@ -35,19 +38,26 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.example.capstone0.BottomNavigationThings.CommonUtils.D_Bookmarkshoe;
+import com.example.capstone0.BottomNavigationThings.CommonUtils.D_PastOrders;
 import com.example.capstone0.BottomNavigationThings.Profile.A_MyOrders;
+import com.example.capstone0.BottomNavigationThings.Profile.D_Address;
 import com.example.capstone0.D_CurrentUser;
 import com.example.capstone0.R;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 
 public class CompleteViewOfProduct extends AppCompatActivity implements View.OnClickListener {
@@ -64,20 +74,29 @@ public class CompleteViewOfProduct extends AppCompatActivity implements View.OnC
    Toolbar toolbar;
    boolean isBookMarked=false;
    String CurrentBookMarkedId;
-    String payeeAddress = "9866772522@ybl";
+    String payeeAddress = "9491006254@ybl";
     String payeeName = "First Step Corporation";
-    String transactionNote = "FirstStep :";
-    String amount = "11";
+    String transactionNote = "FirstStep corporation:";
+    String amount;
     String currencyUnit = "INR";
-    SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+    SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
     Date date = new Date();
     String D_Date=formatter.format(date);
+    String D_OrderId=D_CurrentUser.getPhone()+""+System.currentTimeMillis();
+    Boolean isStored=false;
+    ListView listView;
+    String D_address_For_Shipping;
+    ArrayList<String> addressArrayList=new ArrayList<>();
+    ArrayAdapter adapter;
+    String ProductLink;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_complete_view_of_product);
+        setListViewForAddress();
         findViewByIds();
         gettingDataFromIntent();
+        checkAlreadyBookMarked();
         settingDataIntoViews();
         createNotifications();
     }
@@ -118,15 +137,16 @@ public class CompleteViewOfProduct extends AppCompatActivity implements View.OnC
     }
     private void gettingDataFromIntent()
     {
-       Intent intent=getIntent();
-      D_ProductCategoryByGender=intent.getStringExtra("ProductCategoryByGender");
-      D_ProductCategoryByMaterial=intent.getStringExtra("ProductCategoryByMaterial");
-      D_ProductTitle=intent.getStringExtra("ProductTitle");
-      D_Price=intent.getStringExtra("ProductPrice");
-      D_ProductDescription=intent.getStringExtra("ProductDescription");
-      D_Image=intent.getStringExtra("ImageLocation");
-      D_Quantity=Integer.parseInt(intent.getExtras().getString("Quantity","1"));
-      D_Size=Integer.parseInt(intent.getExtras().getString("SizeOfProduct","0"));
+        Intent intent=getIntent();
+        ProductLink=intent.getStringExtra("ProductLink");
+        D_ProductCategoryByGender=intent.getStringExtra("ProductCategoryByGender");
+        D_ProductCategoryByMaterial=intent.getStringExtra("ProductCategoryByMaterial");
+        D_ProductTitle=intent.getStringExtra("ProductTitle");
+        D_Price=intent.getStringExtra("ProductPrice");
+        D_ProductDescription=intent.getStringExtra("ProductDescription");
+        D_Image=intent.getStringExtra("ImageLocation");
+        D_Quantity=Integer.parseInt(intent.getExtras().getString("Quantity","1"));
+        D_Size=Integer.parseInt(intent.getExtras().getString("SizeOfProduct","0"));
     }
    private void settingDataIntoViews()
    {
@@ -159,8 +179,8 @@ public class CompleteViewOfProduct extends AppCompatActivity implements View.OnC
            }
            else
            {
-            D_PreviousOrdersAndPresentInCartOrders d_previousOrdersAndPresentInCartOrders=new D_PreviousOrdersAndPresentInCartOrders(D_ProductCategoryByGender,D_ProductCategoryByMaterial,D_Image,D_Price,null,null,D_ProductTitle,D_ProductDescription,null,null,null);
-            setBookmark(d_previousOrdersAndPresentInCartOrders);
+            D_Bookmarkshoe d_bookmarkshoe=new D_Bookmarkshoe(ProductLink,D_ProductCategoryByGender,D_ProductCategoryByMaterial);
+            setBookmark(d_bookmarkshoe);
             isBookMarked=true;
            }
         }
@@ -204,11 +224,23 @@ public class CompleteViewOfProduct extends AppCompatActivity implements View.OnC
     private boolean checkSizeChecked()
     {
        RadioButton radioButton= (RadioButton) radioGroup.findViewById(radioGroup.getCheckedRadioButtonId());
-       if (radioButton==null)
+       if (radioButton==null) {
+           Snackbar.make(relativeLayout,"Please Choose Dimension's of product",Snackbar.LENGTH_LONG).show();
            return false;
-       else
+       }else
            return true;
     }
+    private boolean checkAddressChecked()
+    {
+        if (!TextUtils.isEmpty(D_address_For_Shipping))
+            return true;
+        else
+        {
+            Snackbar.make(relativeLayout,"Please Choose Address",Snackbar.LENGTH_LONG).show();
+            return false;
+        }
+    }
+
     private void PaymentViaPaytm()
     {
         if (checkSizeChecked())
@@ -259,7 +291,8 @@ public class CompleteViewOfProduct extends AppCompatActivity implements View.OnC
                 if (res.toLowerCase().contains(search.toLowerCase())) {
                     Toast.makeText(this, "Payment Successful", Toast.LENGTH_SHORT).show();
                     Log.e("CompleteViewOfProduct","Payment Successful");
-                    TriggerNotifications();
+                    D_PastOrders dPastOrders=new D_PastOrders(D_CurrentUser.getName(),D_CurrentUser.getPhone(),D_CurrentUser.getEmail(),D_address_For_Shipping,D_ProductTitle,D_ProductDescription,D_Image,""+D_Quantity,""+D_Size,D_ProductCategoryByGender,D_ProductCategoryByMaterial,amount,D_OrderId,D_Date+"_"+"Pending");
+                    new AsyncTaskToStorePurchasedProduct().execute(dPastOrders);
                 } else {
                     Toast.makeText(this, "Payment Failed", Toast.LENGTH_SHORT).show();
                     Log.e("CompleteViewOfProduct","Payment failed");
@@ -301,6 +334,22 @@ public class CompleteViewOfProduct extends AppCompatActivity implements View.OnC
             Snackbar.make(relativeLayout, "Please Select Size", Snackbar.LENGTH_SHORT).show();
         }
     }
+
+    private void setListViewForAddress()
+    {
+
+      listView=findViewById(R.id.ListView_Address);
+         adapter=new ArrayAdapter<>(getApplicationContext(),android.R.layout.simple_list_item_single_choice,addressArrayList);
+        listView.setAdapter(adapter);
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                D_address_For_Shipping=addressArrayList.get(position);
+                view.setBackgroundColor(Color.MAGENTA);
+            }
+        });
+        getDataOfAddress();
+    }
    class AsyncTaskToStoreAddToCart extends AsyncTask<D_PreviousOrdersAndPresentInCartOrders,Void,Void>
    {
        @Override
@@ -321,25 +370,21 @@ public class CompleteViewOfProduct extends AppCompatActivity implements View.OnC
    }
 
   private void BuyNowPage() {
-      if (D_Size != 0)
+      if (checkSizeChecked() && checkAddressChecked())
       {
-          int p=Integer.parseInt(D_Price);
-          amount="10";
+          int p=Integer.parseInt(D_Price)*D_Quantity;
+          amount=""+p;
+         String fakeamount="1";
           Uri uri = Uri.parse("upi://pay?pa="+payeeAddress+"&pn="+payeeName+"&tn="+transactionNote+
-                  "&am="+amount+"&cu="+currencyUnit);
+                  "&am="+fakeamount+"&cu="+currencyUnit);
           Log.d("CompleteViewOfProduct", "onClick: uri: "+uri);
           Intent intent = new Intent(Intent.ACTION_VIEW, uri);
           startActivityForResult(intent,2);
-
-      }
-      else {
-          SizeLabel.setTextColor(Color.RED);
-          Snackbar.make(relativeLayout, "Please Select Size", Snackbar.LENGTH_SHORT).show();
       }
 
   }
 
-  private void setBookmark(D_PreviousOrdersAndPresentInCartOrders d_previousOrdersAndPresentInCartOrders)
+  private void setBookmark(D_Bookmarkshoe dBookmarkshoe)
   {
       DatabaseReference databaseReference=FirebaseDatabase.getInstance().getReference("Users").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("MyWishList");
      if (isBookMarked && !TextUtils.isEmpty(CurrentBookMarkedId))
@@ -356,8 +401,8 @@ public class CompleteViewOfProduct extends AppCompatActivity implements View.OnC
      }
      else
      {
-         CurrentBookMarkedId=databaseReference.push().getKey();
-         databaseReference.child(CurrentBookMarkedId).setValue(d_previousOrdersAndPresentInCartOrders).addOnCompleteListener(new OnCompleteListener<Void>() {
+         CurrentBookMarkedId=ProductLink;
+         databaseReference.child(CurrentBookMarkedId).setValue(dBookmarkshoe).addOnCompleteListener(new OnCompleteListener<Void>() {
              @Override
              public void onComplete(@NonNull Task<Void> task) {
                  if (task.isSuccessful())
@@ -398,22 +443,88 @@ public class CompleteViewOfProduct extends AppCompatActivity implements View.OnC
         }
     }
 
-    class AsyncTaskToStoreBuyedProduct extends AsyncTask<D_PreviousOrdersAndPresentInCartOrders,Void,Void>
+    class AsyncTaskToStorePurchasedProduct extends AsyncTask<D_PastOrders,Void,Void>
     {
+
         @Override
-        protected Void doInBackground(D_PreviousOrdersAndPresentInCartOrders... d_previousOrdersAndPresentInCartOrders) {
-            D_PreviousOrdersAndPresentInCartOrders d_previousOrdersAndPresentInCartOrders1=d_previousOrdersAndPresentInCartOrders[0];
-            DatabaseReference databaseReference=FirebaseDatabase.getInstance().getReference("Users").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("MyOrders");
-            databaseReference.push().setValue(d_previousOrdersAndPresentInCartOrders1).addOnCompleteListener(new OnCompleteListener<Void>() {
+        protected Void doInBackground(D_PastOrders... d_pastOrders) {
+            D_PastOrders d_pastOrders1=d_pastOrders[0];
+            DatabaseReference databaseReference=FirebaseDatabase.getInstance().getReference("Users").child("UsersNormalShoeOrders");
+            final String key=databaseReference.push().getKey();
+            databaseReference.child(key).setValue(d_pastOrders1).addOnCompleteListener(new OnCompleteListener<Void>() {
                 @Override
                 public void onComplete(@NonNull Task<Void> task) {
-                    if (task.isSuccessful())
-                        Snackbar.make(relativeLayout,"We will delivery Your Product Soon",Snackbar.LENGTH_SHORT).show();
+                    if (task.isSuccessful()) {
+                        Log.e("CompleteViewOfProduct","Purchased order details stored successfully");
+
+                        DatabaseReference databaseReference1=FirebaseDatabase.getInstance().getReference("Users");
+                        databaseReference1.child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("MyOrders").push().setValue(key);
+                        TriggerNotifications();
+                    }
+                    else
+                    {
+                        Log.e("CompleteViewOfProduct","Unable to store purchased order details in firebase");
+                        isStored=false;
+                    }
                 }
             });
 
             return null;
         }
+
     }
 
+    private void getDataOfAddress()
+    {
+        DatabaseReference databaseReference=FirebaseDatabase.getInstance().getReference("Users").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("Addresses");
+        databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists())
+                {
+                  for (DataSnapshot dataSnapshot1:dataSnapshot.getChildren())
+                  {
+                      D_Address dAddress=dataSnapshot1.getValue(D_Address.class);
+                      addressArrayList.add(dAddress.toString());
+                  }
+                }
+                else
+                {
+                    Log.e("CompleteViewOfProduct","Empty Snapshot of Address");
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+        adapter.notifyDataSetChanged();
+    }
+
+    private void checkAlreadyBookMarked()
+    {
+        DatabaseReference databaseReference=FirebaseDatabase.getInstance().getReference("Users").child(FirebaseAuth.getInstance().getCurrentUser().getUid());
+        databaseReference.child("MyWishList").child(ProductLink).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists())
+                {
+                   isBookMarked=true;
+                   CurrentBookMarkedId=ProductLink;
+                   Bookmark.setImageResource(R.drawable.ic_wishlist_full);
+                }
+                else
+                {
+                     isBookMarked=false;
+                     Bookmark.setImageResource(R.drawable.ic_wishlist);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+    }
 }

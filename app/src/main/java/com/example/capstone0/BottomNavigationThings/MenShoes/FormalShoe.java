@@ -50,6 +50,7 @@ public class FormalShoe extends Fragment {
         void onItemClickListenerOfCardView(int position);
     }
     ArrayList<D_ShoesDataFromInternet> arrayListFormal=new ArrayList<>();
+    ArrayList<String> stringArrayList=new ArrayList<>();
 
     Context context;
     MyAdapterForFormal myAdapterForFormal;
@@ -110,6 +111,7 @@ public class FormalShoe extends Fragment {
             @Override
             public void onItemClickListenerOfCardView(int position) {
                 Intent intent=new Intent(getContext(),CompleteViewOfProduct.class);
+                intent.putExtra("ProductLink",stringArrayList.get(position));
                 intent.putExtra("ImageLocation",arrayListFormal.get(position).ImageLocation);
                 intent.putExtra("ProductTitle",arrayListFormal.get(position).ProductTitleOfShoe);
                 intent.putExtra("ProductPrice",arrayListFormal.get(position).ProductPriceOfShoe);
@@ -128,10 +130,12 @@ public class FormalShoe extends Fragment {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 arrayListFormal.clear();
+                stringArrayList.clear();
                 for(DataSnapshot dataSnapshot1:dataSnapshot.getChildren())
                 {
                     if (dataSnapshot1.exists())
                     {
+                        stringArrayList.add(dataSnapshot1.getKey());
                         String productDescriptionOfShoe=dataSnapshot1.child("ProductDescriptionOfShoe").getValue(String.class);
                         String ProductPrice=dataSnapshot1.child("ProductPriceOfShoe").getValue(String.class);
                         String productTitle=dataSnapshot1.child("ProductTitleOfShoe").getValue(String.class);

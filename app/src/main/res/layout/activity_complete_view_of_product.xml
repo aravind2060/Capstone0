@@ -203,12 +203,18 @@
             android:onClick="onClick"
             />
     </LinearLayout>
-
+    <ListView
+        android:id="@+id/ListView_Address"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/LinearLayout_Quantity"
+        />
       <LinearLayout
           android:layout_width="match_parent"
           android:layout_height="wrap_content"
           android:orientation="horizontal"
           android:layout_alignParentBottom="true"
+          android:layout_above="@id/ListView_Address"
           >
         <Button
             android:id="@+id/AddToCart"

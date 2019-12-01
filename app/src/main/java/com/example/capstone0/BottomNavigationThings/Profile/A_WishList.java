@@ -20,6 +20,7 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.example.capstone0.BottomNavigationThings.MenShoes.CompleteViewOfProduct;
 import com.example.capstone0.BottomNavigationThings.MenShoes.D_PreviousOrdersAndPresentInCartOrders;
+import com.example.capstone0.BottomNavigationThings.MenShoes.D_ShoesDataFromInternet;
 import com.example.capstone0.BottomNavigationThings.MenShoes.EthnicShoe;
 import com.example.capstone0.R;
 import com.google.firebase.auth.FirebaseAuth;
@@ -41,9 +42,12 @@ public class A_WishList extends AppCompatActivity {
     RecyclerView recyclerView;
     TextView noOfWishListed;
     MyAdapterForWishList myAdapterForWishList;
-    ArrayList<D_PreviousOrdersAndPresentInCartOrders> arrayList=new ArrayList<>();
+    ArrayList<D_ShoesDataFromInternet> arrayList=new ArrayList<>();
     Toolbar toolbar;
     SwipeRefreshLayout swipeRefreshLayout;
+    ArrayList<String> D_ProductCategoryByGender=new ArrayList<>();
+    ArrayList<String>D_ProductLink=new ArrayList<>();
+    ArrayList<String>D_ProductCategoryByMaterial=new ArrayList<>();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -113,14 +117,15 @@ public class A_WishList extends AppCompatActivity {
             @Override
             public void onItemClickListenerOfCardView(int position) {
                 Intent intent=new Intent(getApplicationContext(), CompleteViewOfProduct.class);
-                intent.putExtra("ProductCategoryByGender",arrayList.get(position).ProductCategoryByGender);
-                intent.putExtra("ProductCategoryByMaterial",arrayList.get(position).ProductCategoryByMaterial);
-                intent.putExtra("ImageLocation",arrayList.get(position).ProductImage);
-                intent.putExtra("ProductTitle",arrayList.get(position).ProductTitle);
-                intent.putExtra("ProductPrice",arrayList.get(position).ProductPrice);
-                intent.putExtra("ProductDescription",arrayList.get(position).ProductDescription);
-                intent.putExtra("SizeOfProduct",arrayList.get(position).Size);
-                intent.putExtra("Quantity",arrayList.get(position).Quantity);
+                intent.putExtra("ProductCategoryByGender",D_ProductCategoryByGender.get(position));
+                intent.putExtra("ProductCategoryByMaterial",D_ProductCategoryByMaterial.get(position));
+                intent.putExtra("ProductLink",D_ProductLink.get(position));
+                intent.putExtra("ImageLocation",arrayList.get(position).ImageLocation);
+                intent.putExtra("ProductTitle",arrayList.get(position).ProductTitleOfShoe);
+                intent.putExtra("ProductPrice",arrayList.get(position).ProductPriceOfShoe);
+                intent.putExtra("ProductDescription",arrayList.get(position).ProductDescriptionOfShoe);
+                intent.putExtra("SizeOfProduct","7");
+                intent.putExtra("Quantity","1");
                 startActivity(intent);
             }
         });
@@ -128,23 +133,38 @@ public class A_WishList extends AppCompatActivity {
     private void getArrayListData()
     {
         DatabaseReference databaseReference= FirebaseDatabase.getInstance().getReference("Users").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("MyWishList");
-        databaseReference.addValueEventListener(new ValueEventListener() {
+        final DatabaseReference databaseReference1=FirebaseDatabase.getInstance().getReference();
+        databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 if (dataSnapshot.exists())
                 {
                     for (DataSnapshot dataSnapshot1:dataSnapshot.getChildren())
                     {
-                       String ProductCategoryByGender=dataSnapshot1.child("ProductCategoryByGender").getValue(String.class);
-                       String ProductCategoryByMaterial=dataSnapshot1.child("ProductCategoryByMaterial").getValue(String.class);
-                       String ImageLocation=dataSnapshot1.child("ImageLocation").getValue(String.class);
-                       String ProductTitle=dataSnapshot1.child("ProductTitle").getValue(String.class);
-                       String ProductPrice=dataSnapshot1.child("ProductPrice").getValue(String.class);
-                       String ProductDescription=dataSnapshot1.child("ProductDescription").getValue(String.class);
-                       String SizeOfProduct=dataSnapshot1.child("SizeOfProduct").getValue(String.class);
-                       String Quantity=dataSnapshot1.child("Quantity").getValue(String.class);
-                       D_PreviousOrdersAndPresentInCartOrders d_previousOrdersAndPresentInCartOrders=new D_PreviousOrdersAndPresentInCartOrders(ProductCategoryByGender,ProductCategoryByMaterial,ProductTitle,ProductPrice,ImageLocation,ProductDescription,Quantity,SizeOfProduct);
-                       arrayList.add(d_previousOrdersAndPresentInCartOrders);
+                        String pg=dataSnapshot1.child("ProductCategoryByGender").getValue(String.class),pm=dataSnapshot1.child("ProductCategoryByMaterial").getValue(String.class),pl=dataSnapshot1.child("ProductLink").getValue(String.class);
+                        D_ProductCategoryByGender.add(pg);
+                        D_ProductCategoryByMaterial.add(pm);
+                        D_ProductLink.add(pl);
+                       databaseReference1.child(pg).child(pm).child(pl)
+                               .addListenerForSingleValueEvent(new ValueEventListener() {
+                                   @Override
+                                   public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                       if (dataSnapshot.exists())
+                                       {
+                                           String productDescriptionOfShoe=dataSnapshot.child("ProductDescriptionOfShoe").getValue(String.class);
+                                           String ProductPrice=dataSnapshot.child("ProductPriceOfShoe").getValue(String.class);
+                                           String productTitle=dataSnapshot.child("ProductTitleOfShoe").getValue(String.class);
+                                           String imageLocation=dataSnapshot.child("ImageLocation").getValue(String.class);
+                                           D_ShoesDataFromInternet dShoesDataFromInternet=new D_ShoesDataFromInternet(productTitle,ProductPrice,productDescriptionOfShoe,imageLocation);
+                                           arrayList.add(dShoesDataFromInternet);
+                                       }
+                                   }
+
+                                   @Override
+                                   public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                                   }
+                               });
                     }
                 }
             }
@@ -180,10 +200,10 @@ public class A_WishList extends AppCompatActivity {
 
     class MyAdapterForWishList extends RecyclerView.Adapter<MyAdapterForWishList.ViewHolderClass>
     {
-        ArrayList<D_PreviousOrdersAndPresentInCartOrders> cartOrdersArrayList;
+        ArrayList<D_ShoesDataFromInternet> cartOrdersArrayList;
         OnCardViewItemClickListener onCardViewItemClickListener;
 
-        public MyAdapterForWishList(ArrayList<D_PreviousOrdersAndPresentInCartOrders> arrayList1)
+        public MyAdapterForWishList(ArrayList<D_ShoesDataFromInternet> arrayList1)
         {
          this.cartOrdersArrayList=arrayList1;
         }
@@ -199,9 +219,9 @@ public class A_WishList extends AppCompatActivity {
 
         @Override
         public void onBindViewHolder(@NonNull ViewHolderClass holder, int position) {
-            holder.Name.setText(arrayList.get(position).ProductTitle);
-            holder.Price.setText(arrayList.get(position).ProductPrice);
-            Glide.with(getApplicationContext()).load(arrayList.get(position).ProductImage).into(holder.ProductImage);
+            holder.Name.setText(arrayList.get(position).ProductTitleOfShoe);
+            holder.Price.setText(arrayList.get(position).ProductPriceOfShoe);
+            Glide.with(getApplicationContext()).load(arrayList.get(position).ImageLocation).into(holder.ProductImage);
         }
 
         @Override
