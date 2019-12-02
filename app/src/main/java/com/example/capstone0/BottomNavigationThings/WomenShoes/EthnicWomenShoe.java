@@ -45,6 +45,7 @@ public class EthnicWomenShoe extends Fragment {
         void onItemClickListenerOfCardView(int position);
     }
     ArrayList<D_ShoesDataFromInternet> arrayListEthnic =new ArrayList<>();
+    ArrayList<String> stringArrayList=new ArrayList<>();
     MyAdapterForEthnicWomen adapterForEthnicWomen;
     SwipeRefreshLayout swipeRefreshLayout;
     @Override
@@ -99,6 +100,7 @@ public class EthnicWomenShoe extends Fragment {
             @Override
             public void onItemClickListenerOfCardView(int position) {
                 Intent intent=new Intent(getContext(), CompleteViewOfProduct.class);
+                intent.putExtra("ProductLink",stringArrayList.get(position));
                 intent.putExtra("ImageLocation",arrayListEthnic.get(position).ImageLocation);
                 intent.putExtra("ProductTitle",arrayListEthnic.get(position).ProductTitleOfShoe);
                 intent.putExtra("ProductPrice",arrayListEthnic.get(position).ProductPriceOfShoe);
@@ -117,10 +119,12 @@ public class EthnicWomenShoe extends Fragment {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 arrayListEthnic.clear();
+                stringArrayList.clear();
                 for(DataSnapshot dataSnapshot1:dataSnapshot.getChildren())
                 {
                     if (dataSnapshot1.exists())
                     {
+                        stringArrayList.add(dataSnapshot1.getKey());
                         String productDescriptionOfShoe=dataSnapshot1.child("ProductDescriptionOfShoe").getValue(String.class);
                         String ProductPrice=dataSnapshot1.child("ProductPriceOfShoe").getValue(String.class);
                         String productTitle=dataSnapshot1.child("ProductTitleOfShoe").getValue(String.class);

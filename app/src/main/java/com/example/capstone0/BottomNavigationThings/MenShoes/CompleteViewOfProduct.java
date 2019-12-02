@@ -15,9 +15,7 @@ import android.app.PendingIntent;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.Bitmap;
 import android.graphics.Color;
-import android.media.Image;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -30,10 +28,10 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -53,8 +51,6 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageReference;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -64,11 +60,12 @@ public class CompleteViewOfProduct extends AppCompatActivity implements View.OnC
     private static final String CHANNEL_1_ID ="1" ;
     // todo use imageswitcher
     ImageView ProductImage,Bookmark;
-    TextView Price,ProductTitle,ProductDescription,QuantityCounter,SizeLabel;
+    TextView Price,ProductTitle,ProductDescription,QuantityCounter,ProductCategory;
+
     Button AddToCart;
     ImageButton Quantity_Increment,Quantity_Decrement;
     RadioGroup radioGroup;
-   RelativeLayout relativeLayout;
+   LinearLayout linearLayout;
    String D_ProductTitle,D_ProductCategoryByGender,D_ProductCategoryByMaterial,D_Price,D_ProductDescription,D_Image;
    int D_Quantity=1,D_Size=0,ActualPrice=1200;
    Toolbar toolbar;
@@ -94,6 +91,7 @@ public class CompleteViewOfProduct extends AppCompatActivity implements View.OnC
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_complete_view_of_product);
         setListViewForAddress();
+        getDataOfAddress();
         findViewByIds();
         gettingDataFromIntent();
         checkAlreadyBookMarked();
@@ -102,8 +100,9 @@ public class CompleteViewOfProduct extends AppCompatActivity implements View.OnC
     }
     private void findViewByIds()
     {
-        relativeLayout=findViewById(R.id.relativeLayout_CompleteProduct);
+        linearLayout =findViewById(R.id.linearLayout_CompleteProduct);
         ProductImage=findViewById(R.id.ImageOfProduct_Custom);
+        ProductCategory=findViewById(R.id.ProductMaterial_CompleteViewOfProduct);
         Price=findViewById(R.id.Price);
         ProductTitle=findViewById(R.id.NameOfProduct);
         ProductDescription=findViewById(R.id.ProductDescription);
@@ -114,7 +113,6 @@ public class CompleteViewOfProduct extends AppCompatActivity implements View.OnC
         AddToCart=findViewById(R.id.AddToCart);
         toolbar=findViewById(R.id.Toolbar_complete_view_Of_Product);
         radioGroup=findViewById(R.id.Sizes);
-        SizeLabel=findViewById(R.id.SizeLabel);
         AddToCart.setOnClickListener(this);
         Bookmark.setOnClickListener(this);
         Quantity_Increment.setOnClickListener(this);
@@ -155,6 +153,7 @@ public class CompleteViewOfProduct extends AppCompatActivity implements View.OnC
      ProductDescription.setText(D_ProductDescription);
      QuantityCounter.setText(""+D_Quantity);
      Price.setText(D_Price);
+     ProductCategory.setText(D_ProductCategoryByGender+" - "+D_ProductCategoryByMaterial);
    }
     @Override
     public void onClick(View v) {
@@ -225,7 +224,7 @@ public class CompleteViewOfProduct extends AppCompatActivity implements View.OnC
     {
        RadioButton radioButton= (RadioButton) radioGroup.findViewById(radioGroup.getCheckedRadioButtonId());
        if (radioButton==null) {
-           Snackbar.make(relativeLayout,"Please Choose Dimension's of product",Snackbar.LENGTH_LONG).show();
+           Snackbar.make(linearLayout,"Please Choose Dimension's of product",Snackbar.LENGTH_LONG).show();
            return false;
        }else
            return true;
@@ -236,8 +235,15 @@ public class CompleteViewOfProduct extends AppCompatActivity implements View.OnC
             return true;
         else
         {
-            Snackbar.make(relativeLayout,"Please Choose Address",Snackbar.LENGTH_LONG).show();
-            return false;
+            if (addressArrayList.size()!=0) {
+                Snackbar.make(linearLayout, "Please Choose Address", Snackbar.LENGTH_LONG).show();
+                return false;
+            }
+            else
+            {
+             Snackbar.make(linearLayout,"Please Add new Address",Snackbar.LENGTH_SHORT).show();
+             return false;
+            }
         }
     }
 
@@ -249,7 +255,7 @@ public class CompleteViewOfProduct extends AppCompatActivity implements View.OnC
             Intent paytmIntent=new Intent();
             Bundle bundle=new Bundle();
             bundle.putDouble("nativeSdkForMerchantAmount", ActualPrice);
-            bundle.putString("orderid", "1111");
+            bundle.putString("orderid", D_OrderId);
             bundle.putString("txnToken", "123");
             bundle.putString("mid", "");
             paytmIntent.setComponent(new ComponentName("net.one97.paytm", "net.one97.paytm.AJRJarvisSplash"));
@@ -306,7 +312,7 @@ public class CompleteViewOfProduct extends AppCompatActivity implements View.OnC
 
     private void snackbarHelp()
     {
-        Snackbar.make(relativeLayout,"Need Help! Please feel free to",Snackbar.LENGTH_LONG).setAction("Contact Us!", new View.OnClickListener() {
+        Snackbar.make(linearLayout,"Need Help! Please feel free to",Snackbar.LENGTH_LONG).setAction("Contact Us!", new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if(ActivityCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.CALL_PHONE)!= PackageManager.PERMISSION_GRANTED)
@@ -330,8 +336,7 @@ public class CompleteViewOfProduct extends AppCompatActivity implements View.OnC
         }
         else
         {
-            SizeLabel.setTextColor(Color.RED);
-            Snackbar.make(relativeLayout, "Please Select Size", Snackbar.LENGTH_SHORT).show();
+            Snackbar.make(linearLayout, "Please Select Size", Snackbar.LENGTH_SHORT).show();
         }
     }
 
@@ -341,14 +346,13 @@ public class CompleteViewOfProduct extends AppCompatActivity implements View.OnC
       listView=findViewById(R.id.ListView_Address);
          adapter=new ArrayAdapter<>(getApplicationContext(),android.R.layout.simple_list_item_single_choice,addressArrayList);
         listView.setAdapter(adapter);
+        listView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 D_address_For_Shipping=addressArrayList.get(position);
-                view.setBackgroundColor(Color.MAGENTA);
             }
         });
-        getDataOfAddress();
     }
    class AsyncTaskToStoreAddToCart extends AsyncTask<D_PreviousOrdersAndPresentInCartOrders,Void,Void>
    {
@@ -491,6 +495,7 @@ public class CompleteViewOfProduct extends AppCompatActivity implements View.OnC
                 else
                 {
                     Log.e("CompleteViewOfProduct","Empty Snapshot of Address");
+                    Snackbar.make(linearLayout,"Please Add Address By Going to Profile Section",Snackbar.LENGTH_SHORT).show();
                 }
             }
 

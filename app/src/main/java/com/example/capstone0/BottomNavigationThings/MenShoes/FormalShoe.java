@@ -158,38 +158,6 @@ public class FormalShoe extends Fragment {
         });
     }
 
-    class AsyncTaskToFetchFormal extends AsyncTask<Void,Void,Void>
-    {
-
-        @Override
-        protected Void doInBackground(Void... strings) {
-            DatabaseReference databaseReference= FirebaseDatabase.getInstance().getReference("MenFootWear").child("Formal");
-            //arrayListFormal.clear();
-            databaseReference.addValueEventListener(new ValueEventListener() {
-                @Override
-                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                    for (DataSnapshot dataSnapshot1:dataSnapshot.getChildren()) {
-                        D_ShoesDataFromInternet dShoesDataFromInternet = dataSnapshot1.getValue(D_ShoesDataFromInternet.class);
-                        if (dShoesDataFromInternet != null) {
-                            arrayListFormal.add(dShoesDataFromInternet);
-                            Log.e("MenFragment","Going inside");
-                        }
-                        else
-                        {
-                            Log.e("MenFragment","Unable To go inside");
-                        }
-                    }
-                }
-
-                @Override
-                public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                }
-            });
-            return null;
-        }
-    }
-
     class MyAdapterForFormal extends RecyclerView.Adapter<MyAdapterForFormal.ViewHolderClass>
     {
 

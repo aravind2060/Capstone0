@@ -37,9 +37,9 @@ public class D_Address {
         stringBuilder.append("Name:"+Name+"\n");
         stringBuilder.append("Phone:"+Phone+"\n");
         stringBuilder.append("HouseNo:"+HouseNo+"\n");
-        stringBuilder.append("Road:"+Road_Area_Colony+"\n");
+        stringBuilder.append("State:"+State+"-"+PinCode+"\n");
         stringBuilder.append("City:"+City+"\n");
-        stringBuilder.append("State:"+State+"-"+PinCode);
+        stringBuilder.append("Road:"+Road_Area_Colony);
         return stringBuilder.toString();
     }
 }

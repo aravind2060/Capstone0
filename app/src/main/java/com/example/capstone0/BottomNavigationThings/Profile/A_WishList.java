@@ -3,6 +3,7 @@ package com.example.capstone0.BottomNavigationThings.Profile;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
@@ -107,7 +108,7 @@ public class A_WishList extends AppCompatActivity {
     private void setRecyclerView()
     {
         recyclerView=findViewById(R.id.RecyclerView_wishList);
-        LinearLayoutManager linearLayoutManager=new LinearLayoutManager(getApplicationContext());
+        GridLayoutManager linearLayoutManager=new GridLayoutManager(getApplicationContext(),2);
         recyclerView.setLayoutManager(linearLayoutManager);
         recyclerView.setHasFixedSize(true);
         myAdapterForWishList=new MyAdapterForWishList(arrayList);
@@ -145,7 +146,7 @@ public class A_WishList extends AppCompatActivity {
                         D_ProductCategoryByGender.add(pg);
                         D_ProductCategoryByMaterial.add(pm);
                         D_ProductLink.add(pl);
-                       databaseReference1.child(pg).child(pm).child(pl)
+                             databaseReference1.child(pg).child(pm).child(pl)
                                .addListenerForSingleValueEvent(new ValueEventListener() {
                                    @Override
                                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -166,6 +167,7 @@ public class A_WishList extends AppCompatActivity {
                                    }
                                });
                     }
+                    myAdapterForWishList.notifyDataSetChanged();
                 }
             }
 
@@ -174,7 +176,6 @@ public class A_WishList extends AppCompatActivity {
 
             }
         });
-        myAdapterForWishList.notifyDataSetChanged();
     }
 
     private void getNoOfWishListedProducts()

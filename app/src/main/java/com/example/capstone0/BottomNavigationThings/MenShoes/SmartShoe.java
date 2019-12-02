@@ -50,6 +50,7 @@ public class SmartShoe extends Fragment {
         void onItemClickListenerOfCardView(int position);
     }
     ArrayList<D_ShoesDataFromInternet> arrayListSmart=new ArrayList<>();
+    ArrayList<String> stringArrayList=new ArrayList<>();
     Context context;
     MyAdapterForSmartMen myAdapterSmart;
     SwipeRefreshLayout swipeRefreshLayout;
@@ -108,6 +109,7 @@ public class SmartShoe extends Fragment {
             @Override
             public void onItemClickListenerOfCardView(int position) {
                 Intent intent=new Intent(getContext(),CompleteViewOfProduct.class);
+                intent.putExtra("ProductLink",stringArrayList.get(position));
                 intent.putExtra("ImageLocation",arrayListSmart.get(position).ImageLocation);
                 intent.putExtra("ProductTitle",arrayListSmart.get(position).ProductTitleOfShoe);
                 intent.putExtra("ProductPrice",arrayListSmart.get(position).ProductPriceOfShoe);
@@ -126,10 +128,12 @@ public class SmartShoe extends Fragment {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 arrayListSmart.clear();
+                stringArrayList.clear();
                 for(DataSnapshot dataSnapshot1:dataSnapshot.getChildren())
                 {
                     if (dataSnapshot1.exists())
                     {
+                        stringArrayList.add(dataSnapshot1.getKey());
                         String productDescriptionOfShoe=dataSnapshot1.child("ProductDescriptionOfShoe").getValue(String.class);
                         String ProductPrice=dataSnapshot1.child("ProductPriceOfShoe").getValue(String.class);
                         String productTitle=dataSnapshot1.child("ProductTitleOfShoe").getValue(String.class);
