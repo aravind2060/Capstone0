@@ -12,7 +12,6 @@
         android:layout_height="match_parent"
         android:orientation="vertical"
         >
-
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/Toolbar_MyCart"
             android:layout_width="match_parent"
@@ -30,17 +29,73 @@
             android:layout_marginTop="15dp"
             android:layout_marginBottom="10dp"
             />
-        <com.google.android.material.card.MaterialCardView
-            android:id="@+id/card1_MyOrders"
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            app:cardUseCompatPadding="true"
-            >
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/MyCart_RecyclerView"
+            android:layout_height="wrap_content">
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                />
-        </com.google.android.material.card.MaterialCardView>
+                android:orientation="vertical"
+                android:layout_above="@id/linearlayout_mycart"
+                >
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/card1_MyOrders"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:cardUseCompatPadding="true"
+                    android:layout_weight="3"
+                    >
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/MyCart_RecyclerView"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        />
+                </com.google.android.material.card.MaterialCardView>
+                <LinearLayout
+                    android:id="@+id/linearrlayout_mycart_address"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:layout_below="@id/card1_MyOrders"
+                    android:layout_weight="1"
+                    >
+                    <ListView
+                        android:id="@+id/ListView_Address_MyCart"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        />
+                </LinearLayout>
+            </LinearLayout>
+
+
+            <LinearLayout
+                android:id="@+id/linearlayout_mycart"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_alignParentBottom="true"
+                >
+                <TextView
+                    android:id="@+id/Price_MyCart"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="1200"
+                    android:textAlignment="center"
+                    android:padding="12dp"
+                    android:textColor="#444"
+                    android:textSize="18sp"
+                    />
+                <Button
+                    android:id="@+id/BuyNow_MyCart"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Buy Now"
+                    android:textColor="@color/White"
+                    android:background="@drawable/background_of_button"
+                    />
+            </LinearLayout>
+        </RelativeLayout>
     </LinearLayout>
 </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>

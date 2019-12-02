@@ -20,7 +20,6 @@
         android:theme="@style/AppTheme">
         <activity android:name=".BottomNavigationThings.Profile.A_MyCart"></activity>
         <activity android:name=".BottomNavigationThings.Profile.A_WishList" />
-        <activity android:name=".BottomNavigationThings.MenShoes.A_BuyNow" />
         <activity android:name=".BottomNavigationThings.CustomShoes.CustomDesignBuyNowPage" />
         <activity android:name=".BottomNavigationThings.Profile.A_MyOrders" />
         <activity android:name=".BottomNavigationThings.MenShoes.CompleteViewOfProduct" />

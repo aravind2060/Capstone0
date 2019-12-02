@@ -9,13 +9,14 @@ import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 
 import android.Manifest;
+import android.app.AlertDialog;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.ComponentName;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.Color;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -41,6 +42,7 @@ import com.example.capstone0.BottomNavigationThings.CommonUtils.D_PastOrders;
 import com.example.capstone0.BottomNavigationThings.Profile.A_MyOrders;
 import com.example.capstone0.BottomNavigationThings.Profile.D_Address;
 import com.example.capstone0.D_CurrentUser;
+import com.example.capstone0.Login.A_SignIn;
 import com.example.capstone0.R;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -80,9 +82,9 @@ public class CompleteViewOfProduct extends AppCompatActivity implements View.OnC
     Date date = new Date();
     String D_Date=formatter.format(date);
     String D_OrderId=D_CurrentUser.getPhone()+""+System.currentTimeMillis();
-    Boolean isStored=false;
+    Boolean isStored=false,isInCart=false;
     ListView listView;
-    String D_address_For_Shipping;
+    String D_address_For_Shipping,CurrentInCartId;
     ArrayList<String> addressArrayList=new ArrayList<>();
     ArrayAdapter adapter;
     String ProductLink;
@@ -91,13 +93,47 @@ public class CompleteViewOfProduct extends AppCompatActivity implements View.OnC
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_complete_view_of_product);
         setListViewForAddress();
+
         getDataOfAddress();
         findViewByIds();
         gettingDataFromIntent();
         checkAlreadyBookMarked();
         settingDataIntoViews();
         createNotifications();
+        checkAlreadyInCart();
     }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        if (FirebaseAuth.getInstance().getCurrentUser()==null)
+        {
+            AlertDialog.Builder  alertDialog;
+            final AlertDialog alertDialog1;
+            alertDialog=new AlertDialog.Builder(getApplicationContext());
+            alertDialog.setMessage("You did logged in Please log in?");
+            alertDialog.setTitle("Do not have account?");
+            alertDialog.setPositiveButton("Goto Signin", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    Intent intent=new Intent(getApplicationContext(),A_SignIn.class);
+                     intent.putExtra("Number",0);
+                    startActivity(intent);
+                }
+            });
+            alertDialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.dismiss();
+                    onBackPressed();
+                }
+            });
+            alertDialog.setCancelable(false);
+           alertDialog1=alertDialog.create();
+           alertDialog1.show();
+        }
+    }
+
     private void findViewByIds()
     {
         linearLayout =findViewById(R.id.linearLayout_CompleteProduct);
@@ -159,7 +195,17 @@ public class CompleteViewOfProduct extends AppCompatActivity implements View.OnC
     public void onClick(View v) {
         if (v.getId()==R.id.AddToCart)
         {
-         AddToCart();
+            if (isInCart)
+            {
+                setAddToCart(null);
+                isInCart=false;
+            }
+            else
+            {
+                D_Bookmarkshoe d_bookmarkshoe=new D_Bookmarkshoe(ProductLink,D_ProductCategoryByGender,D_ProductCategoryByMaterial);
+                setAddToCart(d_bookmarkshoe);
+                isInCart=true;
+            }
         }
         else if (v.getId()==R.id.Quantity_increment)
         {
@@ -309,6 +355,13 @@ public class CompleteViewOfProduct extends AppCompatActivity implements View.OnC
             }
         }
     }
+  @Override
+  public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+      super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+      if (requestCode==1)
+          snackbarHelp();
+  }
+
 
     private void snackbarHelp()
     {
@@ -329,16 +382,6 @@ public class CompleteViewOfProduct extends AppCompatActivity implements View.OnC
             }
         }).show();
     }
-    private void AddToCart() {
-        if (D_Size != 0) {
-            D_PreviousOrdersAndPresentInCartOrders d_previousOrdersAndPresentInCartOrders = new D_PreviousOrdersAndPresentInCartOrders(D_ProductCategoryByGender, D_ProductCategoryByMaterial,D_ProductTitle,D_Price,D_Image,D_ProductDescription,""+D_Quantity,""+D_Size);
-            new AsyncTaskToStoreAddToCart().execute(d_previousOrdersAndPresentInCartOrders);
-        }
-        else
-        {
-            Snackbar.make(linearLayout, "Please Select Size", Snackbar.LENGTH_SHORT).show();
-        }
-    }
 
     private void setListViewForAddress()
     {
@@ -354,24 +397,7 @@ public class CompleteViewOfProduct extends AppCompatActivity implements View.OnC
             }
         });
     }
-   class AsyncTaskToStoreAddToCart extends AsyncTask<D_PreviousOrdersAndPresentInCartOrders,Void,Void>
-   {
-       @Override
-       protected Void doInBackground(D_PreviousOrdersAndPresentInCartOrders... d_previousOrdersAndPresentInCartOrders) {
-           D_PreviousOrdersAndPresentInCartOrders d_previousOrdersAndPresentInCartOrders1=d_previousOrdersAndPresentInCartOrders[0];
-           DatabaseReference databaseReference=FirebaseDatabase.getInstance().getReference("Users").child(FirebaseAuth.getInstance().getCurrentUser().getUid());
-           databaseReference.child("MyCart").push().setValue(d_previousOrdersAndPresentInCartOrders1).addOnCompleteListener(new OnCompleteListener<Void>() {
-               @Override
-               public void onComplete(@NonNull Task<Void> task) {
-                   if (task.isSuccessful())
-                       Log.e("CompleteViewOfProduct","Order stored in database");
-                   else
-                       Log.e("CompleteViewOfProduct","Unable to store details of purchased order");
-               }
-           });
-           return null;
-       }
-   }
+
 
   private void BuyNowPage() {
       if (checkSizeChecked() && checkAddressChecked())
@@ -531,5 +557,60 @@ public class CompleteViewOfProduct extends AppCompatActivity implements View.OnC
 
             }
         });
+    }
+    private void checkAlreadyInCart()
+    {
+        DatabaseReference databaseReference=FirebaseDatabase.getInstance().getReference("Users").child(FirebaseAuth.getInstance().getCurrentUser().getUid());
+        databaseReference.child("MyCart").child(ProductLink).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists())
+                {
+                    isInCart=true;
+                    CurrentInCartId=ProductLink;
+                    AddToCart.setText("In Cart");
+                }
+                else
+                {
+                    isInCart=false;
+                    AddToCart.setText("Add To Cart");
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+    private void setAddToCart(D_Bookmarkshoe dBookmarkshoe)
+    {
+        DatabaseReference databaseReference=FirebaseDatabase.getInstance().getReference("Users").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("MyCart");
+        if (isInCart && !TextUtils.isEmpty(CurrentInCartId))
+        {
+            databaseReference.child(CurrentInCartId).removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
+                @Override
+                public void onComplete(@NonNull Task<Void> task) {
+                    if (task.isSuccessful())
+                        AddToCart.setText("In Cart");
+                    else
+                        AddToCart.setText("Add To Cart");
+                }
+            });
+        }
+        else
+        {
+            CurrentInCartId=ProductLink;
+            databaseReference.child(CurrentInCartId).setValue(dBookmarkshoe).addOnCompleteListener(new OnCompleteListener<Void>() {
+                @Override
+                public void onComplete(@NonNull Task<Void> task) {
+                    if (task.isSuccessful())
+                        AddToCart.setText("In Cart");
+                    else
+                        AddToCart.setText("Add To Cart");
+                }
+            });
+        }
     }
 }

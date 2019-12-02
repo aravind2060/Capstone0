@@ -1,7 +1,6 @@
 package com.example.capstone0.Login;
 
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 
@@ -17,7 +16,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.example.capstone0.BottomNavigationThings.MenShoes.A_BuyNow;
 import com.example.capstone0.D_CurrentUser;
 import com.example.capstone0.MainActivity;
 import com.example.capstone0.R;
@@ -393,16 +391,13 @@ public class A_SignIn extends AppCompatActivity implements View.OnClickListener 
        {
         startActivity(new Intent(getApplicationContext(),MainActivity.class));
        }
-       else if (num==1)
-       {
-           startActivity(new Intent(getApplicationContext(), A_BuyNow.class));
-       }
        else if (num==2)
        {
            Intent intent1=new Intent(getApplicationContext(),MainActivity.class);
            intent1.putExtra("SetProfileFragmentAtStart",1);
            startActivity(intent1);
        }
+
    }
    class ASyncTaskToFetchCurrentUserData extends AsyncTask<Void,Void,Void> {
 

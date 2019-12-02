@@ -4,7 +4,6 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
@@ -22,7 +21,6 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.example.capstone0.BottomNavigationThings.CommonUtils.D_PastOrders;
 import com.example.capstone0.BottomNavigationThings.MenShoes.CompleteViewOfProduct;
-import com.example.capstone0.BottomNavigationThings.MenShoes.D_PreviousOrdersAndPresentInCartOrders;
 import com.example.capstone0.R;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
